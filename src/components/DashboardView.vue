@@ -196,6 +196,7 @@ const generateNewLink = () => {
 // Lógica de Tela de Checkout Simulado Real
 const showCheckoutModal = ref(false)
 const checkoutPlan = ref(null)
+const checkoutSelectedPlanType = ref('Individual')
 const checkoutStep = ref(1) // 1: preencher dados, 2: sucesso
 const checkoutName = ref('')
 const checkoutEmail = ref('')
@@ -209,7 +210,14 @@ const checkoutCardExpiry = ref('')
 const checkoutCardCvv = ref('')
 
 const openCheckout = (linkItem) => {
-  checkoutPlan.value = linkItem
+  checkoutPlan.value = linkItem || {
+    name: 'Checkout - Plano Individual',
+    planType: 'Individual',
+    desc: 'Link de checkout oficial da landing page',
+    price: 'R$ 39,90/mês',
+    url: 'https://checkout.acessosaude.com/plano-individual?ref=joao-silva-123'
+  }
+  checkoutSelectedPlanType.value = checkoutPlan.value.planType
   checkoutStep.value = 1
   checkoutName.value = ''
   checkoutEmail.value = ''
@@ -222,16 +230,56 @@ const openCheckout = (linkItem) => {
   showCheckoutModal.value = true
 }
 
+const updateCheckoutPlanDetails = () => {
+  let planPrice = 'R$ 39,90/mês'
+  let planUrl = 'https://checkout.acessosaude.com/plano-individual?ref=joao-silva-123'
+  let planDesc = 'Link de checkout oficial da landing page'
+  
+  if (checkoutSelectedPlanType.value === 'Bronze') {
+    planPrice = 'R$ 29,90/mês'
+    planUrl = 'https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123'
+    planDesc = 'Link de checkout promocional'
+  } else if (checkoutSelectedPlanType.value === 'Família') {
+    planPrice = 'R$ 84,90/mês'
+    planUrl = 'https://checkout.acessosaude.com/plano-familia?ref=joao-silva-123'
+    planDesc = 'Link de checkout familiar (Até 4 Vidas)'
+  }
+
+  checkoutPlan.value = {
+    name: `Checkout - Plano ${checkoutSelectedPlanType.value}`,
+    planType: checkoutSelectedPlanType.value,
+    desc: planDesc,
+    price: planPrice,
+    url: planUrl
+  }
+}
+
 const finishCheckout = () => {
   checkoutStep.value = 2
-  // Incrementar a conversão do plano selecionado na simulação para torná-lo vivo
+  
   if (checkoutPlan.value) {
-    const found = userLinks.value.find(l => l.url === checkoutPlan.value.url)
-    if (found) {
+    let found = userLinks.value.find(l => l.url === checkoutPlan.value.url)
+    if (!found) {
+      const planPriceVal = parseFloat(checkoutPlan.value.price.replace('R$ ', '').replace('/mês', '').replace(',', '.'))
+      const newComm = planPriceVal * 0.1
+      
+      userLinks.value.unshift({
+        name: checkoutPlan.value.name,
+        planType: checkoutPlan.value.planType,
+        desc: checkoutPlan.value.desc,
+        price: checkoutPlan.value.price,
+        payment: 'Cartão ou PIX',
+        url: checkoutPlan.value.url,
+        cliques: 1,
+        conversoes: 1,
+        comissao: 'R$ ' + newComm.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        status: 'Ativo'
+      })
+    } else {
       found.conversoes++
       const currentComm = parseFloat(found.comissao.replace('R$ ', '').replace('.', '').replace(',', '.'))
       const planValue = parseFloat(found.price.replace('R$ ', '').replace('/mês', '').replace(',', '.'))
-      const newComm = currentComm + (planValue * 0.1) // comissão de 10% do valor do plano
+      const newComm = currentComm + (planValue * 0.1)
       found.comissao = 'R$ ' + newComm.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     }
   }
@@ -999,7 +1047,7 @@ const finishCheckout = () => {
           <p>Crie, gerencie e acompanhe a performance dos seus links de divulgação.</p>
         </header>
 
-        <button class="btn btn-secondary" style="margin-bottom: 24px;" @click="showCreateLinkModal = true">
+        <button class="btn btn-secondary" style="margin-bottom: 24px;" @click="openCheckout(null)">
           <i class="ph ph-plus"></i> Criar Novo Link
         </button>
 
@@ -1051,47 +1099,6 @@ const finishCheckout = () => {
 
     </div>
 
-    <!-- MODAL DE CRIAÇÃO DE LINK DE CHECKOUT -->
-    <div v-if="showCreateLinkModal" class="sso-overlay-custom" @click.self="showCreateLinkModal = false">
-      <div class="card-details-modal" style="max-width: 460px;">
-        <div class="modal-close" @click="showCreateLinkModal = false"><i class="ph ph-x"></i></div>
-        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 8px;">Gerar Link de Checkout</h3>
-        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
-          Selecione o plano desejado para gerar uma URL de indicação direta de vendas.
-        </p>
-        
-        <form @submit.prevent="generateNewLink" style="display:flex; flex-direction:column; gap:16px;">
-          <div class="form-group">
-            <label class="form-label">Plano Acesso Saúde</label>
-            <select v-model="selectedPlan" class="form-control" required>
-              <option value="Bronze">Plano Bronze (Promocional) — R$ 29,90/mês</option>
-              <option value="Individual">Plano Individual — R$ 39,90/mês</option>
-              <option value="Família">Plano Família — R$ 84,90/mês</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Código de Indicação (Ref)</label>
-            <input v-model="refCodeInput" type="text" class="form-control" placeholder="joao-silva-123" required />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Meio de Pagamento Aceito</label>
-            <select v-model="selectedPayment" class="form-control" required>
-              <option value="ambos">Cartão de Crédito ou PIX</option>
-              <option value="cartao">Apenas Cartão de Crédito</option>
-              <option value="pix">Apenas PIX</option>
-            </select>
-          </div>
-
-          <div style="display:flex; gap:12px; margin-top: 8px;">
-            <button type="button" class="btn btn-outline" style="flex:1;" @click="showCreateLinkModal = false">Cancelar</button>
-            <button type="submit" class="btn btn-secondary" style="flex:1;">Gerar Link</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
     <!-- TELA DE CHECKOUT REAL SIMULADO -->
     <div v-if="showCheckoutModal" class="checkout-overlay" @click.self="showCheckoutModal = false">
       <div class="checkout-box">
@@ -1105,27 +1112,37 @@ const finishCheckout = () => {
           <div v-if="checkoutStep === 1" class="checkout-grid">
             <div class="checkout-left">
               <form @submit.prevent="finishCheckout">
-                <div class="checkout-section-title">1. Informações Pessoais</div>
+                <div class="checkout-section-title">1. Plano de Assinatura</div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                  <label class="form-label" style="color: var(--text-dark) !important;">Selecione o Plano</label>
+                  <select v-model="checkoutSelectedPlanType" class="form-control" @change="updateCheckoutPlanDetails" required>
+                    <option value="Bronze">Plano Bronze (Promocional) — R$ 29,90/mês</option>
+                    <option value="Individual">Plano Individual — R$ 39,90/mês</option>
+                    <option value="Família">Plano Família — R$ 84,90/mês</option>
+                  </select>
+                </div>
+
+                <div class="checkout-section-title">2. Informações Pessoais</div>
                 <div class="form-group" style="margin-bottom: 12px;">
-                  <label class="form-label">Nome Completo</label>
+                  <label class="form-label" style="color: var(--text-dark) !important;">Nome Completo</label>
                   <input v-model="checkoutName" type="text" class="form-control" placeholder="Digite seu nome completo" required />
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
-                  <label class="form-label">E-mail</label>
+                  <label class="form-label" style="color: var(--text-dark) !important;">E-mail</label>
                   <input v-model="checkoutEmail" type="email" class="form-control" placeholder="nome@exemplo.com" required />
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
                   <div class="form-group">
-                    <label class="form-label">CPF</label>
+                    <label class="form-label" style="color: var(--text-dark) !important;">CPF</label>
                     <input v-model="checkoutCpf" type="text" class="form-control" placeholder="000.000.000-00" required />
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Celular</label>
+                    <label class="form-label" style="color: var(--text-dark) !important;">Celular</label>
                     <input v-model="checkoutPhone" type="tel" class="form-control" placeholder="(00) 00000-0000" required />
                   </div>
                 </div>
 
-                <div class="checkout-section-title">2. Forma de Pagamento</div>
+                <div class="checkout-section-title">3. Forma de Pagamento</div>
                 <div class="payment-methods-select">
                   <div :class="['pay-select-card', { active: checkoutPaymentMethod === 'card' }]" @click="checkoutPaymentMethod = 'card'">
                     <i class="ph ph-credit-card"></i> Cartão de Crédito
