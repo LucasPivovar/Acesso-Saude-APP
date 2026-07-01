@@ -1367,9 +1367,9 @@ const saveEditedLink = () => {
           </div>
 
           <!-- QR Code Simulado -->
-          <div style="background: white; border-radius: var(--radius-md); padding: 16px; border: 1px solid var(--border-color); text-align: center; margin-top: 8px;">
-            <i class="ph ph-qr-code" style="font-size: 100px; color: #0f172a !important; display:block; margin: 0 auto 8px;"></i>
-            <span style="font-size: 12px; color: #475569 !important; font-weight:600;">QR Code de Afiliado</span>
+          <div style="background: #334155; border-radius: var(--radius-md); padding: 16px; border: 1px solid #475569; text-align: center; margin-top: 8px;">
+            <i class="ph ph-qr-code" style="font-size: 100px; color: #ffffff !important; display:block; margin: 0 auto 8px;"></i>
+            <span style="font-size: 12px; color: #cbd5e1 !important; font-weight:600;">QR Code de Afiliado</span>
           </div>
         </div>
       </div>
@@ -1387,25 +1387,25 @@ const saveEditedLink = () => {
         <div style="display:flex; flex-direction:column; gap:20px;">
           <!-- Grid de Métricas -->
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-            <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
-              <span style="font-size: 12px; color: #475569 !important; display:block; margin-bottom: 4px; font-weight:500;">Cliques Totais</span>
-              <strong style="font-size: 24px; color: #0f172a !important;">{{ selectedLink.cliques }}</strong>
+            <div style="background:#334155; padding:16px; border-radius:var(--radius-md); border:1px solid #475569; text-align:center;">
+              <span style="font-size: 12px; color: #cbd5e1 !important; display:block; margin-bottom: 4px; font-weight:500;">Cliques Totais</span>
+              <strong style="font-size: 24px; color: #ffffff !important;">{{ selectedLink.cliques }}</strong>
             </div>
-            <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
-              <span style="font-size: 12px; color: #475569 !important; display:block; margin-bottom: 4px; font-weight:500;">Conversões</span>
-              <strong style="font-size: 24px; color: #16a34a;">{{ selectedLink.conversoes }}</strong>
+            <div style="background:#334155; padding:16px; border-radius:var(--radius-md); border:1px solid #475569; text-align:center;">
+              <span style="font-size: 12px; color: #cbd5e1 !important; display:block; margin-bottom: 4px; font-weight:500;">Conversões</span>
+              <strong style="font-size: 24px; color: #4ade80 !important;">{{ selectedLink.conversoes }}</strong>
             </div>
           </div>
 
           <!-- Detalhamento de Comissões -->
-          <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+          <div style="background:#334155; padding:16px; border-radius:var(--radius-md); border:1px solid #475569;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
-              <span style="font-size: 13px; color: #475569 !important; font-weight:500;">Comissão Gerada:</span>
-              <strong style="font-size: 14px; color: #16a34a;">{{ selectedLink.comissao }}</strong>
+              <span style="font-size: 13px; color: #cbd5e1 !important; font-weight:500;">Comissão Gerada:</span>
+              <strong style="font-size: 14px; color: #4ade80 !important;">{{ selectedLink.comissao }}</strong>
             </div>
             <div style="display:flex; justify-content:space-between;">
-              <span style="font-size: 13px; color: #475569 !important; font-weight:500;">Taxa de Conversão:</span>
-              <strong style="font-size: 14px; color: #0f172a !important;">{{ selectedLink.cliques > 0 ? ((selectedLink.conversoes / selectedLink.cliques) * 100).toFixed(1) : '0.0' }}%</strong>
+              <span style="font-size: 13px; color: #cbd5e1 !important; font-weight:500;">Taxa de Conversão:</span>
+              <strong style="font-size: 14px; color: #ffffff !important;">{{ selectedLink.cliques > 0 ? ((selectedLink.conversoes / selectedLink.cliques) * 100).toFixed(1) : '0.0' }}%</strong>
             </div>
           </div>
 
