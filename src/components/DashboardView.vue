@@ -1342,8 +1342,8 @@ const saveEditedLink = () => {
     <div v-if="showShareModal && selectedLink" class="sso-overlay-custom" @click.self="showShareModal = false">
       <div class="card-details-modal" style="max-width: 480px;">
         <div class="modal-close" @click="showShareModal = false"><i class="ph ph-x"></i></div>
-        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 8px;">Compartilhar Link</h3>
-        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+        <h3 style="font-size: 20px; color: #ffffff !important; margin-bottom: 8px;">Compartilhar Link</h3>
+        <p style="font-size: 13px; color: #cbd5e1 !important; margin-bottom: 20px;">
           O link foi copiado para sua área de transferência! Escolha um canal abaixo para enviar:
         </p>
 
@@ -1368,8 +1368,8 @@ const saveEditedLink = () => {
 
           <!-- QR Code Simulado -->
           <div style="background: white; border-radius: var(--radius-md); padding: 16px; border: 1px solid var(--border-color); text-align: center; margin-top: 8px;">
-            <i class="ph ph-qr-code" style="font-size: 100px; color: var(--secondary); display:block; margin: 0 auto 8px;"></i>
-            <span style="font-size: 12px; color: var(--text-gray); font-weight:600;">QR Code de Afiliado</span>
+            <i class="ph ph-qr-code" style="font-size: 100px; color: #0f172a !important; display:block; margin: 0 auto 8px;"></i>
+            <span style="font-size: 12px; color: #475569 !important; font-weight:600;">QR Code de Afiliado</span>
           </div>
         </div>
       </div>
@@ -1379,8 +1379,8 @@ const saveEditedLink = () => {
     <div v-if="showReportModal && selectedLink" class="sso-overlay-custom" @click.self="showReportModal = false">
       <div class="card-details-modal" style="max-width: 520px;">
         <div class="modal-close" @click="showReportModal = false"><i class="ph ph-x"></i></div>
-        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 4px;">Relatório de Desempenho</h3>
-        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+        <h3 style="font-size: 20px; color: #ffffff !important; margin-bottom: 4px;">Relatório de Desempenho</h3>
+        <p style="font-size: 13px; color: #cbd5e1 !important; margin-bottom: 20px;">
           Métricas de conversão para: <strong>{{ selectedLink.name }}</strong>
         </p>
 
@@ -1388,11 +1388,11 @@ const saveEditedLink = () => {
           <!-- Grid de Métricas -->
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
             <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
-              <span style="font-size: 12px; color: var(--text-gray); display:block; margin-bottom: 4px; font-weight:500;">Cliques Totais</span>
-              <strong style="font-size: 24px; color: var(--secondary);">{{ selectedLink.cliques }}</strong>
+              <span style="font-size: 12px; color: #475569 !important; display:block; margin-bottom: 4px; font-weight:500;">Cliques Totais</span>
+              <strong style="font-size: 24px; color: #0f172a !important;">{{ selectedLink.cliques }}</strong>
             </div>
             <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
-              <span style="font-size: 12px; color: var(--text-gray); display:block; margin-bottom: 4px; font-weight:500;">Conversões</span>
+              <span style="font-size: 12px; color: #475569 !important; display:block; margin-bottom: 4px; font-weight:500;">Conversões</span>
               <strong style="font-size: 24px; color: #16a34a;">{{ selectedLink.conversoes }}</strong>
             </div>
           </div>
@@ -1400,33 +1400,33 @@ const saveEditedLink = () => {
           <!-- Detalhamento de Comissões -->
           <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
             <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
-              <span style="font-size: 13px; color: var(--text-gray); font-weight:500;">Comissão Gerada:</span>
+              <span style="font-size: 13px; color: #475569 !important; font-weight:500;">Comissão Gerada:</span>
               <strong style="font-size: 14px; color: #16a34a;">{{ selectedLink.comissao }}</strong>
             </div>
             <div style="display:flex; justify-content:space-between;">
-              <span style="font-size: 13px; color: var(--text-gray); font-weight:500;">Taxa de Conversão:</span>
-              <strong style="font-size: 14px; color: var(--secondary);">{{ selectedLink.cliques > 0 ? ((selectedLink.conversoes / selectedLink.cliques) * 100).toFixed(1) : '0.0' }}%</strong>
+              <span style="font-size: 13px; color: #475569 !important; font-weight:500;">Taxa de Conversão:</span>
+              <strong style="font-size: 14px; color: #0f172a !important;">{{ selectedLink.cliques > 0 ? ((selectedLink.conversoes / selectedLink.cliques) * 100).toFixed(1) : '0.0' }}%</strong>
             </div>
           </div>
 
           <!-- Histórico de Conversões Simuladas -->
           <div>
-            <h4 style="font-size: 14px; color: var(--secondary); margin-bottom: 12px; font-weight:600;">Histórico de Clientes Convertidos</h4>
+            <h4 style="font-size: 14px; color: #f1f5f9 !important; margin-bottom: 12px; font-weight:600;">Histórico de Clientes Convertidos</h4>
             <div v-if="selectedLink.conversoes > 0" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; padding-right:4px;">
               <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:var(--radius-sm); font-size:12px;">
                 <span style="color:white; font-weight:500;">Carlos Silva</span>
-                <span style="color:var(--text-gray);">Há 3 dias • Ativo</span>
+                <span style="color:#94a3b8 !important;">Há 3 dias • Ativo</span>
               </div>
               <div v-if="selectedLink.conversoes > 1" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:var(--radius-sm); font-size:12px;">
                 <span style="color:white; font-weight:500;">Ana Martins</span>
-                <span style="color:var(--text-gray);">Há 5 dias • Ativo</span>
+                <span style="color:#94a3b8 !important;">Há 5 dias • Ativo</span>
               </div>
               <div v-if="selectedLink.conversoes > 2" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:var(--radius-sm); font-size:12px;">
                 <span style="color:white; font-weight:500;">Simulação Cliente #{{ selectedLink.conversoes }}</span>
-                <span style="color:var(--text-gray);">Hoje • Ativo</span>
+                <span style="color:#94a3b8 !important;">Hoje • Ativo</span>
               </div>
             </div>
-            <p v-else style="font-size:12px; color:var(--text-gray); text-align:center; padding:12px 0; border:1px dashed rgba(255,255,255,0.1); border-radius:var(--radius-sm);">
+            <p v-else style="font-size:12px; color:#cbd5e1 !important; text-align:center; padding:12px 0; border:1px dashed rgba(255,255,255,0.1); border-radius:var(--radius-sm);">
               Nenhuma conversão registrada para este link ainda.
             </p>
           </div>
@@ -1438,8 +1438,8 @@ const saveEditedLink = () => {
     <div v-if="showEditLinkModal && selectedLink" class="sso-overlay-custom" @click.self="showEditLinkModal = false">
       <div class="card-details-modal" style="max-width: 480px;">
         <div class="modal-close" @click="showEditLinkModal = false"><i class="ph ph-x"></i></div>
-        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 8px;">Editar Link de Indicação</h3>
-        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+        <h3 style="font-size: 20px; color: #ffffff !important; margin-bottom: 8px;">Editar Link de Indicação</h3>
+        <p style="font-size: 13px; color: #cbd5e1 !important; margin-bottom: 20px;">
           Modifique as informações de identificação do seu link.
         </p>
 
@@ -1873,12 +1873,40 @@ const saveEditedLink = () => {
   width: 90%;
   box-shadow: var(--shadow-lg);
   position: relative;
+  color: #f8fafc;
+}
+
+.card-details-modal h3 {
+  color: #ffffff !important;
+}
+
+.card-details-modal h4 {
+  color: #f1f5f9 !important;
+}
+
+.card-details-modal p {
+  color: #cbd5e1 !important;
+}
+
+.card-details-modal span {
+  color: #94a3b8 !important;
 }
 
 .card-details-modal .form-label,
 .card-details-modal label {
   color: #f1f5f9 !important;
   font-weight: 500;
+}
+
+.card-details-modal .form-control {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+}
+
+.card-details-modal .form-control:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2) !important;
 }
 
 .modal-close {
@@ -1926,7 +1954,7 @@ const saveEditedLink = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(16, 66, 70, 0.85);
+  background: rgba(15, 23, 42, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
