@@ -209,6 +209,54 @@ const checkoutCardName = ref('')
 const checkoutCardExpiry = ref('')
 const checkoutCardCvv = ref('')
 
+const formatCPF = (e) => {
+  let value = e.target.value.replace(/\D/g, '')
+  if (value.length > 11) value = value.slice(0, 11)
+  value = value.replace(/(\d{3})(\d)/, '$1.$2')
+  value = value.replace(/(\d{3})(\d)/, '$1.$2')
+  value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+  checkoutCpf.value = value
+}
+
+const formatPhone = (e) => {
+  let value = e.target.value.replace(/\D/g, '')
+  if (value.length > 11) value = value.slice(0, 11)
+  value = value.replace(/^(\d{2})(\d)/g, '($1) $2')
+  value = value.replace(/(\d{5})(\d)/, '$1-$2')
+  checkoutPhone.value = value
+}
+
+const formatCardNumber = (e) => {
+  let value = e.target.value.replace(/\D/g, '')
+  if (value.length > 16) value = value.slice(0, 16)
+  value = value.replace(/(\d{4})(?=\d)/g, '$1 ')
+  checkoutCardNumber.value = value
+}
+
+const formatCardExpiry = (e) => {
+  let value = e.target.value.replace(/\D/g, '')
+  if (value.length > 4) value = value.slice(0, 4)
+  if (value.length > 2) {
+    value = value.replace(/(\d{2})(\d)/, '$1/$2')
+  }
+  checkoutCardExpiry.value = value
+}
+
+const formatCardCvv = (e) => {
+  let value = e.target.value.replace(/\D/g, '')
+  if (value.length > 4) value = value.slice(0, 4)
+  checkoutCardCvv.value = value
+}
+
+const formatName = (e) => {
+  let value = e.target.value
+  checkoutName.value = value.replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+}
+
+const formatEmail = (e) => {
+  checkoutEmail.value = e.target.value.toLowerCase().replace(/\s/g, '')
+}
+
 const openCheckout = (linkItem) => {
   checkoutPlan.value = linkItem || {
     name: 'Checkout - Plano Individual',
@@ -1126,20 +1174,20 @@ const finishCheckout = () => {
                 <div class="checkout-section-title">2. Informações Pessoais</div>
                 <div class="form-group" style="margin-bottom: 12px;">
                   <label class="form-label" style="color: var(--text-dark) !important;">Nome Completo</label>
-                  <input v-model="checkoutName" type="text" class="form-control" placeholder="Digite seu nome completo" required />
+                  <input v-model="checkoutName" type="text" class="form-control" placeholder="Digite seu nome completo" @input="formatName" required />
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
                   <label class="form-label" style="color: var(--text-dark) !important;">E-mail</label>
-                  <input v-model="checkoutEmail" type="email" class="form-control" placeholder="nome@exemplo.com" required />
+                  <input v-model="checkoutEmail" type="email" class="form-control" placeholder="nome@exemplo.com" @input="formatEmail" required />
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
                   <div class="form-group">
                     <label class="form-label" style="color: var(--text-dark) !important;">CPF</label>
-                    <input v-model="checkoutCpf" type="text" class="form-control" placeholder="000.000.000-00" required />
+                    <input v-model="checkoutCpf" type="text" class="form-control" placeholder="000.000.000-00" @input="formatCPF" required />
                   </div>
                   <div class="form-group">
                     <label class="form-label" style="color: var(--text-dark) !important;">Celular</label>
-                    <input v-model="checkoutPhone" type="tel" class="form-control" placeholder="(00) 00000-0000" required />
+                    <input v-model="checkoutPhone" type="tel" class="form-control" placeholder="(00) 00000-0000" @input="formatPhone" required />
                   </div>
                 </div>
 
@@ -1157,7 +1205,7 @@ const finishCheckout = () => {
                 <div v-if="checkoutPaymentMethod === 'card'" style="display:flex; flex-direction:column; gap:12px;">
                   <div class="form-group">
                     <label class="form-label">Número do Cartão</label>
-                    <input v-model="checkoutCardNumber" type="text" class="form-control" placeholder="4444 5555 6666 7777" required />
+                    <input v-model="checkoutCardNumber" type="text" class="form-control" placeholder="4444 5555 6666 7777" @input="formatCardNumber" required />
                   </div>
                   <div class="form-group">
                     <label class="form-label">Nome do Titular (como no cartão)</label>
@@ -1166,11 +1214,11 @@ const finishCheckout = () => {
                   <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="form-group">
                       <label class="form-label">Validade</label>
-                      <input v-model="checkoutCardExpiry" type="text" class="form-control" placeholder="MM/AA" required />
+                      <input v-model="checkoutCardExpiry" type="text" class="form-control" placeholder="MM/AA" @input="formatCardExpiry" required />
                     </div>
                     <div class="form-group">
                       <label class="form-label">CVV</label>
-                      <input v-model="checkoutCardCvv" type="text" class="form-control" placeholder="123" required />
+                      <input v-model="checkoutCardCvv" type="text" class="form-control" placeholder="123" @input="formatCardCvv" required />
                     </div>
                   </div>
                 </div>
