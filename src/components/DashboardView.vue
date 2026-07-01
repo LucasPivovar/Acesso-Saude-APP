@@ -882,87 +882,138 @@ const copyLink = (text) => {
           <i class="ph ph-plus"></i> Criar Novo Link
         </button>
 
-        <!-- Link 1 -->
+        <!-- Link Plano Bronze -->
         <div class="card link-sharing-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <h4>Link Principal</h4>
-              <p>Seu link padrão de indicação para redes sociais e site</p>
+              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">Checkout - Plano Bronze (Individual)</h4>
+              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Link de checkout direto para indicação do Plano Bronze</p>
             </div>
-            <span class="badge badge-success" style="font-size: 11px;">Ativo</span>
+            <div style="text-align: right;">
+              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">Ativo</span>
+              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>Cartão ou PIX</strong></div>
+            </div>
           </div>
 
           <div class="link-input-group">
-            <input type="text" class="link-input" value="acessosaude.com/ref/joao-silva-123" readonly />
-            <button class="btn btn-primary" @click="copyLink('acessosaude.com/ref/joao-silva-123')">
+            <input type="text" class="link-input" value="https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123" readonly />
+            <button class="btn btn-primary" @click="copyLink('https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123')">
               <i class="ph ph-copy"></i> Copiar
             </button>
           </div>
 
           <div class="sharing-metrics">
             <div class="sharing-metric-box">
+              <span>Valor do Plano</span>
+              <strong style="color: var(--secondary);">R$ 29,90/mês</strong>
+            </div>
+            <div class="sharing-metric-box">
               <span>Cliques</span>
-              <strong>1.247</strong>
+              <strong>845</strong>
             </div>
             <div class="sharing-metric-box">
               <span>Conversões</span>
-              <strong>42</strong>
+              <strong>25</strong>
             </div>
             <div class="sharing-metric-box">
-              <span>Taxa Conversão</span>
-              <strong>3,4%</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Ganhos</span>
-              <strong style="color: #16a34a;">R$ 3.847,50</strong>
+              <span>Comissão Gerada</span>
+              <strong style="color: #16a34a;">R$ 2.450,00</strong>
             </div>
           </div>
 
           <div class="sharing-actions">
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do link principal...' })"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do Plano Bronze...' })"><i class="ph ph-share"></i> Compartilhar</button>
             <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
           </div>
         </div>
 
-        <!-- Link 2 -->
+        <!-- Link Plano Prata -->
         <div class="card link-sharing-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <h4>Link WhatsApp</h4>
-              <p>Link otimizado para envio rápido via conversas e grupos de WhatsApp</p>
+              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">Checkout - Plano Prata (Familiar)</h4>
+              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Link de checkout direto para indicação do Plano Prata</p>
             </div>
-            <span class="badge badge-success" style="font-size: 11px;">Ativo</span>
+            <div style="text-align: right;">
+              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">Ativo</span>
+              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>Cartão ou PIX</strong></div>
+            </div>
           </div>
 
           <div class="link-input-group">
-            <input type="text" class="link-input" value="acessosaude.com/ref/joao-whatsapp" readonly />
-            <button class="btn btn-primary" @click="copyLink('acessosaude.com/ref/joao-whatsapp')">
+            <input type="text" class="link-input" value="https://checkout.acessosaude.com/plano-prata?ref=joao-silva-123" readonly />
+            <button class="btn btn-primary" @click="copyLink('https://checkout.acessosaude.com/plano-prata?ref=joao-silva-123')">
               <i class="ph ph-copy"></i> Copiar
             </button>
           </div>
 
           <div class="sharing-metrics">
             <div class="sharing-metric-box">
+              <span>Valor do Plano</span>
+              <strong style="color: var(--secondary);">R$ 59,90/mês</strong>
+            </div>
+            <div class="sharing-metric-box">
               <span>Cliques</span>
-              <strong>523</strong>
+              <strong>482</strong>
             </div>
             <div class="sharing-metric-box">
               <span>Conversões</span>
-              <strong>18</strong>
+              <strong>14</strong>
             </div>
             <div class="sharing-metric-box">
-              <span>Taxa Conversão</span>
-              <strong>3,4%</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Ganhos</span>
-              <strong style="color: #16a34a;">R$ 1.640,00</strong>
+              <span>Comissão Gerada</span>
+              <strong style="color: #16a34a;">R$ 1.120,50</strong>
             </div>
           </div>
 
           <div class="sharing-actions">
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Abrindo o WhatsApp Web com texto de divulgação pré-definido...' })"><i class="ph ph-whatsapp-logo"></i> Compartilhar</button>
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de conversões...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do Plano Prata...' })"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+          </div>
+        </div>
+
+        <!-- Link Plano Ouro -->
+        <div class="card link-sharing-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">Checkout - Plano Ouro (Premium)</h4>
+              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Link de checkout direto para indicação do Plano Ouro</p>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">Ativo</span>
+              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>Cartão ou PIX</strong></div>
+            </div>
+          </div>
+
+          <div class="link-input-group">
+            <input type="text" class="link-input" value="https://checkout.acessosaude.com/plano-ouro?ref=joao-silva-123" readonly />
+            <button class="btn btn-primary" @click="copyLink('https://checkout.acessosaude.com/plano-ouro?ref=joao-silva-123')">
+              <i class="ph ph-copy"></i> Copiar
+            </button>
+          </div>
+
+          <div class="sharing-metrics">
+            <div class="sharing-metric-box">
+              <span>Valor do Plano</span>
+              <strong style="color: var(--secondary);">R$ 99,90/mês</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Cliques</span>
+              <strong>143</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Conversões</span>
+              <strong>3</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Comissão Gerada</span>
+              <strong style="color: #16a34a;">R$ 277,00</strong>
+            </div>
+          </div>
+
+          <div class="sharing-actions">
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do Plano Ouro...' })"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
           </div>
         </div>
       </div>
