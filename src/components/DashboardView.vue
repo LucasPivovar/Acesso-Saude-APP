@@ -124,9 +124,9 @@ const selectedPayment = ref('ambos')
 
 const userLinks = ref([
   {
-    name: 'Checkout - Plano Bronze (Individual)',
+    name: 'Checkout - Plano Bronze (Promocional)',
     planType: 'Bronze',
-    desc: 'Link de checkout direto para indicação do Plano Bronze',
+    desc: 'Link de checkout promocional',
     price: 'R$ 29,90/mês',
     payment: 'Cartão ou PIX',
     url: 'https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123',
@@ -136,24 +136,24 @@ const userLinks = ref([
     status: 'Ativo'
   },
   {
-    name: 'Checkout - Plano Prata (Familiar)',
-    planType: 'Prata',
-    desc: 'Link de checkout direto para indicação do Plano Prata',
-    price: 'R$ 59,90/mês',
+    name: 'Checkout - Plano Individual',
+    planType: 'Individual',
+    desc: 'Link de checkout oficial da landing page',
+    price: 'R$ 39,90/mês',
     payment: 'Cartão ou PIX',
-    url: 'https://checkout.acessosaude.com/plano-prata?ref=joao-silva-123',
+    url: 'https://checkout.acessosaude.com/plano-individual?ref=joao-silva-123',
     cliques: 482,
     conversoes: 14,
     comissao: 'R$ 1.120,50',
     status: 'Ativo'
   },
   {
-    name: 'Checkout - Plano Ouro (Premium)',
-    planType: 'Ouro',
-    desc: 'Link de checkout direto para indicação do Plano Ouro',
-    price: 'R$ 99,90/mês',
+    name: 'Checkout - Plano Família',
+    planType: 'Família',
+    desc: 'Link de checkout familiar (Até 4 Vidas)',
+    price: 'R$ 84,90/mês',
     payment: 'Cartão ou PIX',
-    url: 'https://checkout.acessosaude.com/plano-ouro?ref=joao-silva-123',
+    url: 'https://checkout.acessosaude.com/plano-familia?ref=joao-silva-123',
     cliques: 143,
     conversoes: 3,
     comissao: 'R$ 277,00',
@@ -163,8 +163,8 @@ const userLinks = ref([
 
 const generateNewLink = () => {
   let planPrice = 'R$ 29,90/mês'
-  if (selectedPlan.value === 'Prata') planPrice = 'R$ 59,90/mês'
-  if (selectedPlan.value === 'Ouro') planPrice = 'R$ 99,90/mês'
+  if (selectedPlan.value === 'Individual') planPrice = 'R$ 39,90/mês'
+  if (selectedPlan.value === 'Família') planPrice = 'R$ 84,90/mês'
 
   let paymentMethod = 'Cartão ou PIX'
   if (selectedPayment.value === 'cartao') paymentMethod = 'Apenas Cartão'
@@ -174,9 +174,9 @@ const generateNewLink = () => {
   const finalUrl = `https://checkout.acessosaude.com/plano-${selectedPlan.value.toLowerCase()}?ref=${refCode}`
 
   userLinks.value.unshift({
-    name: `Checkout - Plano ${selectedPlan.value} (${selectedPlan.value === 'Bronze' ? 'Individual' : selectedPlan.value === 'Prata' ? 'Familiar' : 'Premium'})`,
+    name: `Checkout - Plano ${selectedPlan.value}`,
     planType: selectedPlan.value,
-    desc: `Link de checkout direto para indicação do Plano ${selectedPlan.value}`,
+    desc: `Link de checkout para indicação do Plano ${selectedPlan.value}`,
     price: planPrice,
     payment: paymentMethod,
     url: finalUrl,
@@ -191,6 +191,50 @@ const generateNewLink = () => {
     title: 'Link Gerado!',
     message: `Seu link de indicação para o Plano ${selectedPlan.value} foi gerado e adicionado à lista.`
   })
+}
+
+// Lógica de Tela de Checkout Simulado Real
+const showCheckoutModal = ref(false)
+const checkoutPlan = ref(null)
+const checkoutStep = ref(1) // 1: preencher dados, 2: sucesso
+const checkoutName = ref('')
+const checkoutEmail = ref('')
+const checkoutCpf = ref('')
+const checkoutPhone = ref('')
+const checkoutPaymentMethod = ref('card')
+
+const checkoutCardNumber = ref('')
+const checkoutCardName = ref('')
+const checkoutCardExpiry = ref('')
+const checkoutCardCvv = ref('')
+
+const openCheckout = (linkItem) => {
+  checkoutPlan.value = linkItem
+  checkoutStep.value = 1
+  checkoutName.value = ''
+  checkoutEmail.value = ''
+  checkoutCpf.value = ''
+  checkoutPhone.value = ''
+  checkoutCardNumber.value = ''
+  checkoutCardName.value = ''
+  checkoutCardExpiry.value = ''
+  checkoutCardCvv.value = ''
+  showCheckoutModal.value = true
+}
+
+const finishCheckout = () => {
+  checkoutStep.value = 2
+  // Incrementar a conversão do plano selecionado na simulação para torná-lo vivo
+  if (checkoutPlan.value) {
+    const found = userLinks.value.find(l => l.url === checkoutPlan.value.url)
+    if (found) {
+      found.conversoes++
+      const currentComm = parseFloat(found.comissao.replace('R$ ', '').replace('.', '').replace(',', '.'))
+      const planValue = parseFloat(found.price.replace('R$ ', '').replace('/mês', '').replace(',', '.'))
+      const newComm = currentComm + (planValue * 0.1) // comissão de 10% do valor do plano
+      found.comissao = 'R$ ' + newComm.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+  }
 }
 </script>
 
@@ -998,6 +1042,7 @@ const generateNewLink = () => {
           </div>
 
           <div class="sharing-actions">
+            <button class="btn btn-primary" @click="openCheckout(linkItem)"><i class="ph ph-shopping-cart"></i> Abrir Checkout</button>
             <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: `Gerando opções de compartilhamento do link para o Plano ${linkItem.planType}...` })"><i class="ph ph-share"></i> Compartilhar</button>
             <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
           </div>
@@ -1019,9 +1064,9 @@ const generateNewLink = () => {
           <div class="form-group">
             <label class="form-label">Plano Acesso Saúde</label>
             <select v-model="selectedPlan" class="form-control" required>
-              <option value="Bronze">Plano Bronze — R$ 29,90/mês</option>
-              <option value="Prata">Plano Prata — R$ 59,90/mês</option>
-              <option value="Ouro">Plano Ouro — R$ 99,90/mês</option>
+              <option value="Bronze">Plano Bronze (Promocional) — R$ 29,90/mês</option>
+              <option value="Individual">Plano Individual — R$ 39,90/mês</option>
+              <option value="Família">Plano Família — R$ 84,90/mês</option>
             </select>
           </div>
 
@@ -1044,6 +1089,127 @@ const generateNewLink = () => {
             <button type="submit" class="btn btn-secondary" style="flex:1;">Gerar Link</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- TELA DE CHECKOUT REAL SIMULADO -->
+    <div v-if="showCheckoutModal" class="checkout-overlay" @click.self="showCheckoutModal = false">
+      <div class="checkout-box">
+        <header class="checkout-header">
+          <h3><i class="ph ph-shield-check text-green"></i> Checkout Seguro - Acesso Saúde</h3>
+          <div class="modal-close" @click="showCheckoutModal = false" style="position:static; cursor:pointer;"><i class="ph ph-x"></i></div>
+        </header>
+
+        <div class="checkout-body">
+          <!-- Passo 1: Informações e Pagamento -->
+          <div v-if="checkoutStep === 1" class="checkout-grid">
+            <div class="checkout-left">
+              <form @submit.prevent="finishCheckout">
+                <div class="checkout-section-title">1. Informações Pessoais</div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <label class="form-label">Nome Completo</label>
+                  <input v-model="checkoutName" type="text" class="form-control" placeholder="Digite seu nome completo" required />
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <label class="form-label">E-mail</label>
+                  <input v-model="checkoutEmail" type="email" class="form-control" placeholder="nome@exemplo.com" required />
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                  <div class="form-group">
+                    <label class="form-label">CPF</label>
+                    <input v-model="checkoutCpf" type="text" class="form-control" placeholder="000.000.000-00" required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Celular</label>
+                    <input v-model="checkoutPhone" type="tel" class="form-control" placeholder="(00) 00000-0000" required />
+                  </div>
+                </div>
+
+                <div class="checkout-section-title">2. Forma de Pagamento</div>
+                <div class="payment-methods-select">
+                  <div :class="['pay-select-card', { active: checkoutPaymentMethod === 'card' }]" @click="checkoutPaymentMethod = 'card'">
+                    <i class="ph ph-credit-card"></i> Cartão de Crédito
+                  </div>
+                  <div :class="['pay-select-card', { active: checkoutPaymentMethod === 'pix' }]" @click="checkoutPaymentMethod = 'pix'">
+                    <i class="ph ph-qr-code"></i> PIX à Vista
+                  </div>
+                </div>
+
+                <!-- Formulário de Cartão -->
+                <div v-if="checkoutPaymentMethod === 'card'" style="display:flex; flex-direction:column; gap:12px;">
+                  <div class="form-group">
+                    <label class="form-label">Número do Cartão</label>
+                    <input v-model="checkoutCardNumber" type="text" class="form-control" placeholder="4444 5555 6666 7777" required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nome do Titular (como no cartão)</label>
+                    <input v-model="checkoutCardName" type="text" class="form-control" placeholder="JOAO H SILVA" required />
+                  </div>
+                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                      <label class="form-label">Validade</label>
+                      <input v-model="checkoutCardExpiry" type="text" class="form-control" placeholder="MM/AA" required />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">CVV</label>
+                      <input v-model="checkoutCardCvv" type="text" class="form-control" placeholder="123" required />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Formulário de Pix -->
+                <div v-else style="background: var(--bg-gray); padding: 16px; border-radius: var(--radius-sm); border: 1px dashed var(--border-color); text-align: center;">
+                  <i class="ph ph-qr-code" style="font-size: 80px; color: var(--secondary); display:block; margin-bottom: 8px;"></i>
+                  <strong style="color: var(--secondary); display:block; margin-bottom: 4px;">PIX Copia e Cola disponível após confirmar</strong>
+                  <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Liberação imediata dos seus benefícios de telemedicina.</p>
+                </div>
+
+                <button type="submit" class="btn btn-secondary btn-full" style="margin-top: 24px; font-weight: 700; height: 48px;">
+                  Confirmar e Ativar Plano
+                </button>
+              </form>
+            </div>
+
+            <!-- Coluna Direita: Resumo do Pedido -->
+            <div class="checkout-right" v-if="checkoutPlan">
+              <div class="order-summary-box">
+                <h4 style="font-size: 15px; color: var(--secondary); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Resumo do Pedido</h4>
+                <div class="summary-row">
+                  <span>Plano Selecionado:</span>
+                  <strong>{{ checkoutPlan.planType }}</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Periodicidade:</span>
+                  <strong>Mensal</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Forma de Pagamento:</span>
+                  <strong>{{ checkoutPaymentMethod === 'card' ? 'Cartão de Crédito' : 'PIX' }}</strong>
+                </div>
+                <div class="summary-row total">
+                  <span>Total a Pagar:</span>
+                  <span>{{ checkoutPlan.price }}</span>
+                </div>
+
+                <div style="margin-top: 20px; text-align: center; font-size: 12px; color: var(--text-gray);">
+                  <i class="ph ph-lock-key" style="margin-right: 4px;"></i> Ambiente 100% criptografado e seguro.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Passo 2: Sucesso -->
+          <div v-else class="checkout-success-view">
+            <i class="ph ph-check-circle success-icon-check" style="font-size: 64px; color: var(--primary); display:block; margin-bottom: 16px;"></i>
+            <h2 style="color: var(--secondary); font-size: 24px; font-weight: 800; margin-bottom: 8px;">Parabéns! Assinatura Confirmada!</h2>
+            <p style="color: var(--text-gray); font-size: 14px; max-width: 500px; margin: 0 auto 24px; line-height: 1.6;">
+              Obrigado, <strong>{{ checkoutName }}</strong>! Seu plano <strong>{{ checkoutPlan?.planType }}</strong> foi ativado com sucesso. Os dados de login e instruções de telemedicina foram enviados para <strong>{{ checkoutEmail }}</strong>.
+            </p>
+            <button class="btn btn-secondary" style="min-width: 180px;" @click="showCheckoutModal = false">
+              Voltar ao Portal
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
