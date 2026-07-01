@@ -1138,10 +1138,10 @@ const finishCheckout = () => {
             </div>
           </div>
 
-          <div class="sharing-actions">
-            <button class="btn btn-primary" @click="openCheckout(linkItem)"><i class="ph ph-shopping-cart"></i> Abrir Checkout</button>
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: `Gerando opções de compartilhamento do link para o Plano ${linkItem.planType}...` })"><i class="ph ph-share"></i> Compartilhar</button>
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+          <div class="sharing-actions" style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="emit('triggerDevModal', { title: 'Compartilhar', message: `Gerando opções de compartilhamento do link para o Plano ${linkItem.planType}...` })"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="emit('triggerDevModal', { title: 'Editar Link', message: `Abrindo configurações de edição para o link: ${linkItem.name}` })"><i class="ph ph-note-pencil"></i> Editar</button>
           </div>
         </div>
       </div>
