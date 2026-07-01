@@ -725,14 +725,14 @@ const finishCheckout = () => {
 
       <!-- SUB-ABA 1: VISÃO GERAL -->
       <div v-if="activeRefTab === 'visaoGeral'" class="ref-sub-content">
-        <header class="tab-header">
+        <header class="tab-header animated-item" style="animation-delay: 0.05s;">
           <h2>Seu Programa de Indicações</h2>
           <p>Acompanhe seus ganhos, indicados e performance em tempo real.</p>
         </header>
 
         <!-- Cards de Resumo de Ganhos/Indicados -->
         <section class="metrics-grid">
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.1s;">
             <div class="metric-header">
               <i class="ph ph-coins" style="color: #15803d; background: #dcfce7; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>GANHOS TOTAIS</span>
@@ -740,7 +740,7 @@ const finishCheckout = () => {
             <h3>R$ 3.847,50</h3>
             <p>Desde que começou</p>
           </div>
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.15s;">
             <div class="metric-header">
               <i class="ph ph-calendar" style="color: #1d4ed8; background: #dbeafe; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>ESTE MÊS</span>
@@ -748,7 +748,7 @@ const finishCheckout = () => {
             <h3>R$ 487,50</h3>
             <p>Será descontado da fatura</p>
           </div>
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.2s;">
             <div class="metric-header">
               <i class="ph ph-users" style="color: #6d28d9; background: #ede9fe; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>TOTAL INDICADOS</span>
@@ -756,7 +756,7 @@ const finishCheckout = () => {
             <h3>42</h3>
             <p>Pessoas na sua rede</p>
           </div>
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.25s;">
             <div class="metric-header">
               <i class="ph ph-trend-up" style="color: #b45309; background: #fef3c7; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>TAXA DE ATIVAÇÃO</span>
@@ -769,7 +769,7 @@ const finishCheckout = () => {
         <!-- Grid de Crescimento e Ganhos por Nível -->
         <div class="dashboard-grid" style="margin-top: 24px;">
           <!-- Lado Esquerdo: Crescimento da Rede -->
-          <div class="card" style="padding: 24px;">
+          <div class="card animated-item" style="padding: 24px; animation-delay: 0.3s;">
             <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 20px;">Crescimento da Rede</h3>
             
             <div class="level-row">
@@ -816,7 +816,7 @@ const finishCheckout = () => {
           </div>
 
           <!-- Lado Direito: Ganhos por Nível -->
-          <div class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+          <div class="card animated-item" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; animation-delay: 0.35s;">
             <h3 style="font-size: 18px; color: var(--secondary);">Ganhos por Nível</h3>
             
             <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 16px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
@@ -851,7 +851,7 @@ const finishCheckout = () => {
         </div>
 
         <!-- Últimas Indicações -->
-        <div class="card" style="padding: 24px; margin-top: 24px;">
+        <div class="card animated-item" style="padding: 24px; margin-top: 24px; animation-delay: 0.4s;">
           <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 16px;">Últimas Indicações</h3>
           <div class="activities-list" style="display: flex; flex-direction: column; gap: 16px;">
             <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
@@ -881,13 +881,13 @@ const finishCheckout = () => {
 
       <!-- SUB-ABA 2: MEUS INDICADOS -->
       <div v-if="activeRefTab === 'indicados'" class="ref-sub-content">
-        <header class="tab-header">
+        <header class="tab-header animated-item" style="animation-delay: 0.05s;">
           <h2>Meus Indicados</h2>
           <p>Lista completa de todas as pessoas que você indicou.</p>
         </header>
 
         <!-- Filtros -->
-        <div class="card" style="padding: 16px; margin-bottom: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <div class="card animated-item" style="padding: 16px; margin-bottom: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; animation-delay: 0.1s;">
           <input 
             v-model="refSearchName" 
             type="text" 
@@ -913,7 +913,7 @@ const finishCheckout = () => {
         </div>
 
         <!-- Tabela -->
-        <div class="card" style="overflow-x: auto; padding: 0;">
+        <div class="card animated-item" style="overflow-x: auto; padding: 0; animation-delay: 0.15s;">
           <table class="referral-table">
             <thead>
               <tr>
@@ -926,7 +926,7 @@ const finishCheckout = () => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(refItem, index) in filteredReferrals" :key="index">
+              <tr v-for="(refItem, index) in filteredReferrals" :key="index" class="animated-item" :style="{ 'animation-delay': (0.2 + index * 0.05) + 's' }">
                 <td>
                   <div class="referral-user">
                     <div class="user-avatar-mini">{{ refItem.name.split(' ').map(n=>n[0]).join('') }}</div>
@@ -957,13 +957,13 @@ const finishCheckout = () => {
 
       <!-- SUB-ABA 3: FINANCEIRO -->
       <div v-if="activeRefTab === 'financeiroRef'" class="ref-sub-content">
-        <header class="tab-header">
+        <header class="tab-header animated-item" style="animation-delay: 0.05s;">
           <h2>Histórico Financeiro</h2>
           <p>Acompanhe todas as suas comissões e ganhos obtidos através do programa.</p>
         </header>
 
         <section class="metrics-grid">
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.1s;">
             <div class="metric-header">
               <i class="ph ph-hand-coins" style="color: #15803d; background: #dcfce7; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>GANHOS ACUMULADOS</span>
@@ -971,7 +971,7 @@ const finishCheckout = () => {
             <h3>R$ 3.847,50</h3>
             <p>Desde janeiro de 2026</p>
           </div>
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.15s;">
             <div class="metric-header">
               <i class="ph ph-ticket" style="color: #1d4ed8; background: #dbeafe; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>DESCONTOS APLICADOS</span>
@@ -979,7 +979,7 @@ const finishCheckout = () => {
             <h3>R$ 2.847,50</h3>
             <p>Já abatidos nas faturas</p>
           </div>
-          <div class="metric-card card">
+          <div class="metric-card card animated-item" style="animation-delay: 0.2s;">
             <div class="metric-header">
               <i class="ph ph-clock" style="color: #6d28d9; background: #ede9fe; padding: 8px; border-radius: var(--radius-sm);"></i>
               <span>SALDO A RECEBER</span>
@@ -990,11 +990,11 @@ const finishCheckout = () => {
         </section>
 
         <!-- Lista de Ganhos por Mês -->
-        <div class="card" style="padding: 24px; margin-top: 24px;">
+        <div class="card animated-item" style="padding: 24px; margin-top: 24px; animation-delay: 0.25s;">
           <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 20px;">Ganhos por Mês</h3>
           <div class="invoices-list-v2">
             
-            <div class="invoice-item-v2">
+            <div class="invoice-item-v2 animated-item" style="animation-delay: 0.3s;">
               <div class="inv-info">
                 <i class="ph ph-calendar text-teal icon-large"></i>
                 <div>
@@ -1008,7 +1008,7 @@ const finishCheckout = () => {
               </div>
             </div>
 
-            <div class="invoice-item-v2">
+            <div class="invoice-item-v2 animated-item" style="animation-delay: 0.35s;">
               <div class="inv-info">
                 <i class="ph ph-calendar text-teal icon-large"></i>
                 <div>
@@ -1022,7 +1022,7 @@ const finishCheckout = () => {
               </div>
             </div>
 
-            <div class="invoice-item-v2">
+            <div class="invoice-item-v2 animated-item" style="animation-delay: 0.4s;">
               <div class="inv-info">
                 <i class="ph ph-calendar text-teal icon-large"></i>
                 <div>
@@ -1042,16 +1042,17 @@ const finishCheckout = () => {
 
       <!-- SUB-ABA 4: MEUS LINKS (Dinâmico) -->
       <div v-if="activeRefTab === 'links'" class="ref-sub-content">
-        <header class="tab-header">
-          <h2>Seus Links de Indicação</h2>
-          <p>Crie, gerencie e acompanhe a performance dos seus links de divulgação.</p>
+        <header class="tab-header animated-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; animation-delay: 0.05s;">
+          <div>
+            <h2>Seus Links de Indicação</h2>
+            <p style="margin-bottom: 0;">Crie, gerencie e acompanhe a performance dos seus links de divulgação.</p>
+          </div>
+          <button class="btn btn-secondary" @click="openCheckout(null)">
+            <i class="ph ph-plus"></i> Criar Novo Link
+          </button>
         </header>
 
-        <button class="btn btn-secondary" style="margin-bottom: 24px;" @click="openCheckout(null)">
-          <i class="ph ph-plus"></i> Criar Novo Link
-        </button>
-
-        <div v-for="(linkItem, index) in userLinks" :key="index" class="card link-sharing-card">
+        <div v-for="(linkItem, index) in userLinks" :key="index" class="card link-sharing-card animated-item" :style="{ 'animation-delay': (0.15 + index * 0.1) + 's' }">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
               <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">{{ linkItem.name }}</h4>
