@@ -16,7 +16,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['updateUser', 'logout', 'triggerDevModal'])
+const emit = defineEmits(['updateUser', 'logout', 'triggerDevModal', 'changeTab'])
 
 // Carrossel Contínuo
 const activeSlide = ref(0)
@@ -81,6 +81,40 @@ const recentActivities = ref([
   { desc: 'Cupom Droga Raia resgatado (35% OFF)', date: '18/06/2026 às 09:15', type: 'clube' },
   { desc: 'Atendimento Veterinário Preventivo', date: '04/06/2026 às 11:00', type: 'pet' }
 ])
+
+// Programa de Indicações (Afiliação)
+import { computed } from 'vue'
+const activeRefTab = ref('visaoGeral')
+const refSearchName = ref('')
+const refStatusFilter = ref('todos')
+const refLevelFilter = ref('todos')
+
+const rawReferrals = ref([
+  { name: 'Carlos Silva', email: 'carlos@email.com', level: '1º Nível', status: 'ativo', date: '03/06/2026', gain: 'R$ 10,00' },
+  { name: 'Marina Costa', email: 'marina@email.com', level: '1º Nível', status: 'pendente', date: '28/05/2026', gain: '-' },
+  { name: 'João Pereira', email: 'joao@email.com', level: '1º Nível', status: 'ativo', date: '25/05/2026', gain: 'R$ 10,00' },
+  { name: 'Ana Martins', email: 'ana@email.com', level: '2º Nível', status: 'ativo', date: '20/05/2026', gain: 'R$ 10,00' },
+  { name: 'Pedro Santos', email: 'pedro@email.com', level: '1º Nível', status: 'inativo', date: '10/05/2026', gain: 'R$ 0,00' }
+])
+
+const filteredReferrals = computed(() => {
+  return rawReferrals.value.filter(item => {
+    const matchName = item.name.toLowerCase().includes(refSearchName.value.toLowerCase())
+    const matchStatus = refStatusFilter.value === 'todos' || item.status === refStatusFilter.value
+    const matchLevel = refLevelFilter.value === 'todos' || item.level.includes(refLevelFilter.value)
+    return matchName && matchStatus && matchLevel
+  })
+})
+
+const copyLink = (text) => {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+  }
+  emit('triggerDevModal', {
+    title: 'Link Copiado!',
+    message: 'Link de afiliação copiado para sua área de transferência com sucesso.'
+  })
+}
 </script>
 
 <template>
@@ -201,6 +235,17 @@ const recentActivities = ref([
               <div class="shortcut-details">
                 <h3>Clube de Descontos</h3>
                 <p>Economia em farmácias, cinemas, lazer e lojas parceiras</p>
+              </div>
+              <i class="ph ph-caret-right action-arrow"></i>
+            </div>
+
+            <div class="shortcut-card animated-item" style="animation-delay: 0.8s;" @click="emit('changeTab', 'indicacoes')">
+              <div class="shortcut-icon icon-teal" style="background: #e0f2fe; color: #0369a1;">
+                <i class="ph ph-users-three"></i>
+              </div>
+              <div class="shortcut-details">
+                <h3>Programa de Indicações</h3>
+                <p>Indique amigos e ganhe descontos e comissões em dinheiro</p>
               </div>
               <i class="ph ph-caret-right action-arrow"></i>
             </div>
@@ -476,6 +521,452 @@ const recentActivities = ref([
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ABA 5: PROGRAMA DE INDICAÇÕES -->
+    <div v-if="currentTab === 'indicacoes'" class="tab-content animated-item" style="animation-delay: 0s;">
+      
+      <!-- Sub-Abas do Programa de Indicações -->
+      <nav class="referral-tabs">
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'visaoGeral' }]"
+          @click="activeRefTab = 'visaoGeral'"
+        >
+          <i class="ph ph-squares-four"></i> Visão Geral
+        </button>
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'indicados' }]"
+          @click="activeRefTab = 'indicados'"
+        >
+          <i class="ph ph-users"></i> Meus Indicados
+        </button>
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'financeiroRef' }]"
+          @click="activeRefTab = 'financeiroRef'"
+        >
+          <i class="ph ph-hand-coins"></i> Financeiro
+        </button>
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'links' }]"
+          @click="activeRefTab = 'links'"
+        >
+          <i class="ph ph-link"></i> Meus Links
+        </button>
+      </nav>
+
+      <!-- SUB-ABA 1: VISÃO GERAL -->
+      <div v-if="activeRefTab === 'visaoGeral'" class="ref-sub-content">
+        <header class="tab-header">
+          <h2>Seu Programa de Indicações</h2>
+          <p>Acompanhe seus ganhos, indicados e performance em tempo real.</p>
+        </header>
+
+        <!-- Cards de Resumo de Ganhos/Indicados -->
+        <section class="metrics-grid">
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-coins" style="color: #15803d; background: #dcfce7; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>GANHOS TOTAIS</span>
+            </div>
+            <h3>R$ 3.847,50</h3>
+            <p>Desde que começou</p>
+          </div>
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-calendar" style="color: #1d4ed8; background: #dbeafe; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>ESTE MÊS</span>
+            </div>
+            <h3>R$ 487,50</h3>
+            <p>Será descontado da fatura</p>
+          </div>
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-users" style="color: #6d28d9; background: #ede9fe; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>TOTAL INDICADOS</span>
+            </div>
+            <h3>42</h3>
+            <p>Pessoas na sua rede</p>
+          </div>
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-trend-up" style="color: #b45309; background: #fef3c7; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>TAXA DE ATIVAÇÃO</span>
+            </div>
+            <h3>88%</h3>
+            <p>Pessoas ativas usando</p>
+          </div>
+        </section>
+
+        <!-- Grid de Crescimento e Ganhos por Nível -->
+        <div class="dashboard-grid" style="margin-top: 24px;">
+          <!-- Lado Esquerdo: Crescimento da Rede -->
+          <div class="card" style="padding: 24px;">
+            <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 20px;">Crescimento da Rede</h3>
+            
+            <div class="level-row">
+              <div class="level-row-header">
+                <div class="level-label">
+                  <span class="level-badge lvl-1">1</span>
+                  <span>1º Nível - Indicações diretas</span>
+                </div>
+                <span class="level-count">15 pessoas</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-bar lvl-1" style="width: 100%;"></div>
+              </div>
+              <span class="level-footer">100% ativas • R$ 150,00/mês</span>
+            </div>
+
+            <div class="level-row">
+              <div class="level-row-header">
+                <div class="level-label">
+                  <span class="level-badge lvl-2">2</span>
+                  <span>2º Nível - Indicações indiretas</span>
+                </div>
+                <span class="level-count">22 pessoas</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-bar lvl-2" style="width: 82%;"></div>
+              </div>
+              <span class="level-footer">82% ativas • R$ 220,00/mês</span>
+            </div>
+
+            <div class="level-row">
+              <div class="level-row-header">
+                <div class="level-label">
+                  <span class="level-badge lvl-3">3</span>
+                  <span>3º Nível - Indicações do 2º nível</span>
+                </div>
+                <span class="level-count">5 pessoas</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-bar lvl-3" style="width: 60%;"></div>
+              </div>
+              <span class="level-footer">60% ativas • R$ 117,50/mês</span>
+            </div>
+          </div>
+
+          <!-- Lado Direito: Ganhos por Nível -->
+          <div class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+            <h3 style="font-size: 18px; color: var(--secondary);">Ganhos por Nível</h3>
+            
+            <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 16px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #1e3a8a; font-size: 14px; display:block;">1º Nível</strong>
+                <span style="font-size: 12px; color: #1e40af;">15 pessoas × R$ 10</span>
+              </div>
+              <strong style="color: #1d4ed8;">R$ 150</strong>
+            </div>
+
+            <div style="background: #faf5ff; border-left: 4px solid #7c3aed; padding: 12px 16px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #4c1d95; font-size: 14px; display:block;">2º Nível</strong>
+                <span style="font-size: 12px; color: #5b21b6;">22 pessoas × R$ 10</span>
+              </div>
+              <strong style="color: #6d28d9;">R$ 220</strong>
+            </div>
+
+            <div style="background: #fff7ed; border-left: 4px solid #ea580c; padding: 12px 16px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #7c2d12; font-size: 14px; display:block;">3º Nível</strong>
+                <span style="font-size: 12px; color: #9a3412;">5 pessoas × R$ 23,50</span>
+              </div>
+              <strong style="color: #c2410c;">R$ 117,50</strong>
+            </div>
+
+            <div style="background: #f0fdf4; padding: 16px; border-radius: var(--radius-sm); text-align: center; border: 1px solid #bbf7d0; margin-top: auto;">
+              <span style="font-size: 12px; color: var(--text-gray); display:block; margin-bottom: 4px;">Total este mês</span>
+              <strong style="font-size: 24px; color: #166534;">R$ 487,50</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Últimas Indicações -->
+        <div class="card" style="padding: 24px; margin-top: 24px;">
+          <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 16px;">Últimas Indicações</h3>
+          <div class="activities-list" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+              <div class="user-avatar-mini">CS</div>
+              <div>
+                <strong style="color: var(--text-dark); display:block; font-size: 14px;">Carlos Silva</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">Indicado há 3 dias • 1º Nível • <span class="badge badge-success" style="font-size:10px; padding: 2px 6px;">Ativo</span></span>
+              </div>
+            </div>
+            <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+              <div class="user-avatar-mini">MC</div>
+              <div>
+                <strong style="color: var(--text-dark); display:block; font-size: 14px;">Marina Costa</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">Indicada há 5 dias • 1º Nível • <span class="badge badge-warning" style="font-size:10px; padding: 2px 6px;">Pendente</span></span>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="user-avatar-mini">JP</div>
+              <div>
+                <strong style="color: var(--text-dark); display:block; font-size: 14px;">João Pereira</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">Indicado há 7 dias • 1º Nível • <span class="badge badge-success" style="font-size:10px; padding: 2px 6px;">Ativo</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-ABA 2: MEUS INDICADOS -->
+      <div v-if="activeRefTab === 'indicados'" class="ref-sub-content">
+        <header class="tab-header">
+          <h2>Meus Indicados</h2>
+          <p>Lista completa de todas as pessoas que você indicou.</p>
+        </header>
+
+        <!-- Filtros -->
+        <div class="card" style="padding: 16px; margin-bottom: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <input 
+            v-model="refSearchName" 
+            type="text" 
+            placeholder="Buscar por nome..." 
+            class="form-control" 
+            style="flex: 1; min-width: 200px;" 
+          />
+          <select v-model="refStatusFilter" class="form-control" style="width: auto; min-width: 150px;">
+            <option value="todos">Todos os status</option>
+            <option value="ativo">Ativo</option>
+            <option value="pendente">Pendente</option>
+            <option value="inativo">Inativo</option>
+          </select>
+          <select v-model="refLevelFilter" class="form-control" style="width: auto; min-width: 150px;">
+            <option value="todos">Todos os níveis</option>
+            <option value="1">1º Nível</option>
+            <option value="2">2º Nível</option>
+            <option value="3">3º Nível</option>
+          </select>
+          <button class="btn btn-outline" @click="refSearchName = ''; refStatusFilter = 'todos'; refLevelFilter = 'todos';">
+            Limpar Filtros
+          </button>
+        </div>
+
+        <!-- Tabela -->
+        <div class="card" style="overflow-x: auto; padding: 0;">
+          <table class="referral-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Nível</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ganho/Mês</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(refItem, index) in filteredReferrals" :key="index">
+                <td>
+                  <div class="referral-user">
+                    <div class="user-avatar-mini">{{ refItem.name.split(' ').map(n=>n[0]).join('') }}</div>
+                    <strong style="color: var(--text-dark);">{{ refItem.name }}</strong>
+                  </div>
+                </td>
+                <td>{{ refItem.email }}</td>
+                <td><span class="badge badge-outline" style="font-size:11px;">{{ refItem.level }}</span></td>
+                <td>
+                  <span :class="['status-badge-ref', refItem.status]">
+                    {{ refItem.status.charAt(0).toUpperCase() + refItem.status.slice(1) }}
+                  </span>
+                </td>
+                <td>{{ refItem.date }}</td>
+                <td :style="{ color: refItem.gain !== '-' && refItem.gain !== 'R$ 0,00' ? '#16a34a' : 'inherit', fontWeight: 'bold' }">
+                  {{ refItem.gain }}
+                </td>
+              </tr>
+              <tr v-if="filteredReferrals.length === 0">
+                <td colspan="6" style="text-align: center; padding: 24px; color: var(--text-gray);">
+                  Nenhum indicado encontrado com os filtros aplicados.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUB-ABA 3: FINANCEIRO -->
+      <div v-if="activeRefTab === 'financeiroRef'" class="ref-sub-content">
+        <header class="tab-header">
+          <h2>Histórico Financeiro</h2>
+          <p>Acompanhe todas as suas comissões e ganhos obtidos através do programa.</p>
+        </header>
+
+        <section class="metrics-grid">
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-hand-coins" style="color: #15803d; background: #dcfce7; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>GANHOS ACUMULADOS</span>
+            </div>
+            <h3>R$ 3.847,50</h3>
+            <p>Desde janeiro de 2026</p>
+          </div>
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-ticket" style="color: #1d4ed8; background: #dbeafe; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>DESCONTOS APLICADOS</span>
+            </div>
+            <h3>R$ 2.847,50</h3>
+            <p>Já abatidos nas faturas</p>
+          </div>
+          <div class="metric-card card">
+            <div class="metric-header">
+              <i class="ph ph-clock" style="color: #6d28d9; background: #ede9fe; padding: 8px; border-radius: var(--radius-sm);"></i>
+              <span>SALDO A RECEBER</span>
+            </div>
+            <h3>R$ 1.000,00</h3>
+            <p>A ser pago nos próximos 2 meses</p>
+          </div>
+        </section>
+
+        <!-- Lista de Ganhos por Mês -->
+        <div class="card" style="padding: 24px; margin-top: 24px;">
+          <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 20px;">Ganhos por Mês</h3>
+          <div class="invoices-list-v2">
+            
+            <div class="invoice-item-v2">
+              <div class="inv-info">
+                <i class="ph ph-calendar text-teal icon-large"></i>
+                <div>
+                  <strong>Julho 2026</strong>
+                  <span>Comissão calculada • Mês atual</span>
+                </div>
+              </div>
+              <div class="inv-value">
+                <span style="color: #16a34a;">R$ 487,50</span>
+                <span class="badge badge-success" style="font-size: 11px;">Será descontado</span>
+              </div>
+            </div>
+
+            <div class="invoice-item-v2">
+              <div class="inv-info">
+                <i class="ph ph-calendar text-teal icon-large"></i>
+                <div>
+                  <strong>Junho 2026</strong>
+                  <span>Abatido na fatura de Junho</span>
+                </div>
+              </div>
+              <div class="inv-value">
+                <span style="color: #16a34a;">R$ 450,00</span>
+                <span class="badge badge-outline" style="font-size: 11px;">Descontado</span>
+              </div>
+            </div>
+
+            <div class="invoice-item-v2">
+              <div class="inv-info">
+                <i class="ph ph-calendar text-teal icon-large"></i>
+                <div>
+                  <strong>Maio 2026</strong>
+                  <span>Abatido na fatura de Maio</span>
+                </div>
+              </div>
+              <div class="inv-value">
+                <span style="color: #16a34a;">R$ 420,00</span>
+                <span class="badge badge-outline" style="font-size: 11px;">Descontado</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-ABA 4: MEUS LINKS -->
+      <div v-if="activeRefTab === 'links'" class="ref-sub-content">
+        <header class="tab-header">
+          <h2>Seus Links de Indicação</h2>
+          <p>Crie, gerencie e acompanhe a performance dos seus links de divulgação.</p>
+        </header>
+
+        <button class="btn btn-secondary" style="margin-bottom: 24px;" @click="emit('triggerDevModal', { title: 'Novo Link', message: 'Abrindo o assistente para criação de novo link de afiliado...' })">
+          <i class="ph ph-plus"></i> Criar Novo Link
+        </button>
+
+        <!-- Link 1 -->
+        <div class="card link-sharing-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+            <div>
+              <h4>Link Principal</h4>
+              <p>Seu link padrão de indicação para redes sociais e site</p>
+            </div>
+            <span class="badge badge-success" style="font-size: 11px;">Ativo</span>
+          </div>
+
+          <div class="link-input-group">
+            <input type="text" class="link-input" value="acessosaude.com/ref/joao-silva-123" readonly />
+            <button class="btn btn-primary" @click="copyLink('acessosaude.com/ref/joao-silva-123')">
+              <i class="ph ph-copy"></i> Copiar
+            </button>
+          </div>
+
+          <div class="sharing-metrics">
+            <div class="sharing-metric-box">
+              <span>Cliques</span>
+              <strong>1.247</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Conversões</span>
+              <strong>42</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Taxa Conversão</span>
+              <strong>3,4%</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Ganhos</span>
+              <strong style="color: #16a34a;">R$ 3.847,50</strong>
+            </div>
+          </div>
+
+          <div class="sharing-actions">
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do link principal...' })"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+          </div>
+        </div>
+
+        <!-- Link 2 -->
+        <div class="card link-sharing-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+            <div>
+              <h4>Link WhatsApp</h4>
+              <p>Link otimizado para envio rápido via conversas e grupos de WhatsApp</p>
+            </div>
+            <span class="badge badge-success" style="font-size: 11px;">Ativo</span>
+          </div>
+
+          <div class="link-input-group">
+            <input type="text" class="link-input" value="acessosaude.com/ref/joao-whatsapp" readonly />
+            <button class="btn btn-primary" @click="copyLink('acessosaude.com/ref/joao-whatsapp')">
+              <i class="ph ph-copy"></i> Copiar
+            </button>
+          </div>
+
+          <div class="sharing-metrics">
+            <div class="sharing-metric-box">
+              <span>Cliques</span>
+              <strong>523</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Conversões</span>
+              <strong>18</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Taxa Conversão</span>
+              <strong>3,4%</strong>
+            </div>
+            <div class="sharing-metric-box">
+              <span>Ganhos</span>
+              <strong style="color: #16a34a;">R$ 1.640,00</strong>
+            </div>
+          </div>
+
+          <div class="sharing-actions">
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Abrindo o WhatsApp Web com texto de divulgação pré-definido...' })"><i class="ph ph-whatsapp-logo"></i> Compartilhar</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de conversões...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- MODAL DE CARTEIRINHA DIGITAL DETALHADA -->

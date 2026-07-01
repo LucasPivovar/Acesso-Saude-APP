@@ -112,6 +112,9 @@ const openDevModal = (data) => {
               <button class="dropdown-item" @click="navigateTo('financeiro')">
                 <i class="ph ph-credit-card"></i> Financeiro
               </button>
+              <button class="dropdown-item" @click="navigateTo('indicacoes')">
+                <i class="ph ph-users-three"></i> Indicações
+              </button>
               <button class="dropdown-item" @click="navigateTo('configuracoes')">
                 <i class="ph ph-gear"></i> Configurações
               </button>
@@ -133,6 +136,7 @@ const openDevModal = (data) => {
           @updateUser="handleUpdateUser"
           @logout="handleLogout"
           @triggerDevModal="openDevModal"
+          @changeTab="navigateTo"
         />
       </main>
     </div>
@@ -163,6 +167,7 @@ const openDevModal = (data) => {
             @updateUser="handleUpdateUser"
             @logout="handleLogout"
             @triggerDevModal="openDevModal"
+            @changeTab="navigateTo"
           />
         </main>
 
@@ -174,6 +179,13 @@ const openDevModal = (data) => {
           >
             <i class="ph ph-squares-four"></i>
             <span>Início</span>
+          </button>
+          <button 
+            :class="['pwa-nav-item', { active: currentTab === 'indicacoes' }]"
+            @click="navigateTo('indicacoes')"
+          >
+            <i class="ph ph-users-three"></i>
+            <span>Indicações</span>
           </button>
           <button 
             :class="['pwa-nav-item', { active: currentTab === 'perfil' }]"
@@ -195,13 +207,6 @@ const openDevModal = (data) => {
           >
             <i class="ph ph-user-gear"></i>
             <span>Config</span>
-          </button>
-          <button 
-            class="pwa-nav-item text-red"
-            @click="handleLogout"
-          >
-            <i class="ph ph-sign-out"></i>
-            <span>Sair</span>
           </button>
         </nav>
       </div>

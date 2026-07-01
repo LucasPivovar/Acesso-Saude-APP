@@ -460,3 +460,237 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
+/* ==========================================================================
+   Estilos do Programa de Indicações (Afiliação)
+   ========================================================================== */
+.referral-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.ref-tab-btn {
+  border: none;
+  background: transparent;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-gray);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.ref-tab-btn:hover {
+  color: var(--secondary);
+}
+
+.ref-tab-btn.active {
+  color: var(--secondary);
+  border-bottom-color: var(--primary);
+}
+
+.level-row {
+  margin-bottom: 24px;
+}
+
+.level-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.level-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.level-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.level-badge.lvl-1 { background-color: #2563eb; }
+.level-badge.lvl-2 { background-color: #7c3aed; }
+.level-badge.lvl-3 { background-color: #ea580c; }
+
+.level-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+.progress-bar.lvl-1 { background-color: #2563eb; }
+.progress-bar.lvl-2 { background-color: #7c3aed; }
+.progress-bar.lvl-3 { background-color: #ea580c; }
+
+.level-footer {
+  font-size: 11px;
+  color: var(--text-gray);
+}
+
+/* Link Cards */
+.link-sharing-card {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.link-sharing-card h4 {
+  font-size: 16px;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.link-sharing-card p {
+  font-size: 12px;
+  color: var(--text-gray);
+  margin-bottom: 16px;
+}
+
+.link-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.link-input {
+  flex-grow: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-gray);
+  font-size: 14px;
+  color: var(--text-dark);
+  font-family: monospace;
+}
+
+.sharing-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sharing-metric-box {
+  background: var(--bg-gray);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.sharing-metric-box span {
+  display: block;
+  font-size: 11px;
+  color: var(--text-gray);
+  margin-bottom: 4px;
+}
+
+.sharing-metric-box strong {
+  font-size: 18px;
+  color: var(--secondary);
+}
+
+.sharing-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Meus Indicados Table */
+.referral-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.referral-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-gray);
+}
+
+.referral-table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-gray);
+  vertical-align: middle;
+}
+
+.referral-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.status-badge-ref {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-badge-ref.ativo {
+  background-color: var(--primary-light);
+  color: var(--primary-hover);
+}
+
+.status-badge-ref.pendente {
+  background-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.status-badge-ref.inativo {
+  background-color: #f1f5f9;
+  color: var(--text-light-gray);
+}
+
+
