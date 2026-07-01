@@ -332,6 +332,65 @@ const finishCheckout = () => {
     }
   }
 }
+
+// MODAIS INTERATIVOS DE LINKS
+const showShareModal = ref(false)
+const showReportModal = ref(false)
+const showEditLinkModal = ref(false)
+const selectedLink = ref(null)
+
+// Parâmetros de Edição
+const editLinkName = ref('')
+const editLinkPlanType = ref('Individual')
+const editLinkRefCode = ref('joao-silva-123')
+const editLinkStatus = ref('Ativo')
+
+const openShare = (linkItem) => {
+  selectedLink.value = linkItem
+  // Copiar link automaticamente
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(linkItem.url)
+  }
+  showShareModal.value = true
+}
+
+const openReport = (linkItem) => {
+  selectedLink.value = linkItem
+  showReportModal.value = true
+}
+
+const openEdit = (linkItem) => {
+  selectedLink.value = linkItem
+  editLinkName.value = linkItem.name
+  editLinkPlanType.value = linkItem.planType
+  const match = linkItem.url.match(/ref=([^&]+)/)
+  editLinkRefCode.value = match ? match[1] : 'joao-silva-123'
+  editLinkStatus.value = linkItem.status
+  showEditLinkModal.value = true
+}
+
+const saveEditedLink = () => {
+  if (selectedLink.value) {
+    const found = userLinks.value.find(l => l.url === selectedLink.value.url)
+    if (found) {
+      let planPrice = 'R$ 29,90/mês'
+      if (editLinkPlanType.value === 'Individual') planPrice = 'R$ 39,90/mês'
+      if (editLinkPlanType.value === 'Família') planPrice = 'R$ 84,90/mês'
+
+      found.name = editLinkName.value
+      found.planType = editLinkPlanType.value
+      found.price = planPrice
+      found.status = editLinkStatus.value
+      found.url = `https://checkout.acessosaude.com/plano-${editLinkPlanType.value.toLowerCase()}?ref=${editLinkRefCode.value}`
+      found.desc = `Link de checkout para indicação do Plano ${editLinkPlanType.value}`
+    }
+  }
+  showEditLinkModal.value = false
+  emit('triggerDevModal', {
+    title: 'Link Atualizado!',
+    message: 'As alterações do link de indicação foram salvas com sucesso.'
+  })
+}
 </script>
 
 <template>
@@ -1139,9 +1198,9 @@ const finishCheckout = () => {
           </div>
 
           <div class="sharing-actions" style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="emit('triggerDevModal', { title: 'Compartilhar', message: `Gerando opções de compartilhamento do link para o Plano ${linkItem.planType}...` })"><i class="ph ph-share"></i> Compartilhar</button>
-            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
-            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="emit('triggerDevModal', { title: 'Editar Link', message: `Abrindo configurações de edição para o link: ${linkItem.name}` })"><i class="ph ph-note-pencil"></i> Editar</button>
+            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="openShare(linkItem)"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="openReport(linkItem)"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
+            <button class="btn btn-outline" style="flex:1; min-width: 120px;" @click="openEdit(linkItem)"><i class="ph ph-note-pencil"></i> Editar</button>
           </div>
         </div>
       </div>
@@ -1276,6 +1335,147 @@ const finishCheckout = () => {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE COMPARTILHAMENTO -->
+    <div v-if="showShareModal && selectedLink" class="sso-overlay-custom" @click.self="showShareModal = false">
+      <div class="card-details-modal" style="max-width: 480px;">
+        <div class="modal-close" @click="showShareModal = false"><i class="ph ph-x"></i></div>
+        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 8px;">Compartilhar Link</h3>
+        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+          O link foi copiado para sua área de transferência! Escolha um canal abaixo para enviar:
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Campo Copiar Link -->
+          <div class="link-input-group">
+            <input type="text" class="link-input" :value="selectedLink.url" readonly />
+            <button class="btn btn-primary" @click="copyLink(selectedLink.url)">
+              <i class="ph ph-copy"></i> Copiar
+            </button>
+          </div>
+
+          <!-- Canais Rápidos -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <a :href="`https://api.whatsapp.com/send?text=Olá! Veja as vantagens do Acesso Saúde: ${selectedLink.url}`" target="_blank" class="btn btn-outline" style="display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; background:#22c55e; color:white; border-color:#22c55e; font-weight:600;">
+              <i class="ph ph-whatsapp-logo" style="font-size: 20px;"></i> WhatsApp
+            </a>
+            <a :href="`mailto:?subject=Indicação Acesso Saúde&body=Olá! Conheça o plano do Acesso Saúde que estou te indicando: ${selectedLink.url}`" class="btn btn-outline" style="display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; color:white; font-weight:600;">
+              <i class="ph ph-envelope" style="font-size: 20px;"></i> E-mail
+            </a>
+          </div>
+
+          <!-- QR Code Simulado -->
+          <div style="background: white; border-radius: var(--radius-md); padding: 16px; border: 1px solid var(--border-color); text-align: center; margin-top: 8px;">
+            <i class="ph ph-qr-code" style="font-size: 100px; color: var(--secondary); display:block; margin: 0 auto 8px;"></i>
+            <span style="font-size: 12px; color: var(--text-gray); font-weight:600;">QR Code de Afiliado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE RELATÓRIO DO LINK -->
+    <div v-if="showReportModal && selectedLink" class="sso-overlay-custom" @click.self="showReportModal = false">
+      <div class="card-details-modal" style="max-width: 520px;">
+        <div class="modal-close" @click="showReportModal = false"><i class="ph ph-x"></i></div>
+        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 4px;">Relatório de Desempenho</h3>
+        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+          Métricas de conversão para: <strong>{{ selectedLink.name }}</strong>
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- Grid de Métricas -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
+              <span style="font-size: 12px; color: var(--text-gray); display:block; margin-bottom: 4px; font-weight:500;">Cliques Totais</span>
+              <strong style="font-size: 24px; color: var(--secondary);">{{ selectedLink.cliques }}</strong>
+            </div>
+            <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
+              <span style="font-size: 12px; color: var(--text-gray); display:block; margin-bottom: 4px; font-weight:500;">Conversões</span>
+              <strong style="font-size: 24px; color: #16a34a;">{{ selectedLink.conversoes }}</strong>
+            </div>
+          </div>
+
+          <!-- Detalhamento de Comissões -->
+          <div style="background:var(--bg-gray); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+              <span style="font-size: 13px; color: var(--text-gray); font-weight:500;">Comissão Gerada:</span>
+              <strong style="font-size: 14px; color: #16a34a;">{{ selectedLink.comissao }}</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size: 13px; color: var(--text-gray); font-weight:500;">Taxa de Conversão:</span>
+              <strong style="font-size: 14px; color: var(--secondary);">{{ selectedLink.cliques > 0 ? ((selectedLink.conversoes / selectedLink.cliques) * 100).toFixed(1) : '0.0' }}%</strong>
+            </div>
+          </div>
+
+          <!-- Histórico de Conversões Simuladas -->
+          <div>
+            <h4 style="font-size: 14px; color: var(--secondary); margin-bottom: 12px; font-weight:600;">Histórico de Clientes Convertidos</h4>
+            <div v-if="selectedLink.conversoes > 0" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; padding-right:4px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:var(--radius-sm); font-size:12px;">
+                <span style="color:white; font-weight:500;">Carlos Silva</span>
+                <span style="color:var(--text-gray);">Há 3 dias • Ativo</span>
+              </div>
+              <div v-if="selectedLink.conversoes > 1" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:var(--radius-sm); font-size:12px;">
+                <span style="color:white; font-weight:500;">Ana Martins</span>
+                <span style="color:var(--text-gray);">Há 5 dias • Ativo</span>
+              </div>
+              <div v-if="selectedLink.conversoes > 2" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:var(--radius-sm); font-size:12px;">
+                <span style="color:white; font-weight:500;">Simulação Cliente #{{ selectedLink.conversoes }}</span>
+                <span style="color:var(--text-gray);">Hoje • Ativo</span>
+              </div>
+            </div>
+            <p v-else style="font-size:12px; color:var(--text-gray); text-align:center; padding:12px 0; border:1px dashed rgba(255,255,255,0.1); border-radius:var(--radius-sm);">
+              Nenhuma conversão registrada para este link ainda.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO DE LINK -->
+    <div v-if="showEditLinkModal && selectedLink" class="sso-overlay-custom" @click.self="showEditLinkModal = false">
+      <div class="card-details-modal" style="max-width: 480px;">
+        <div class="modal-close" @click="showEditLinkModal = false"><i class="ph ph-x"></i></div>
+        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 8px;">Editar Link de Indicação</h3>
+        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+          Modifique as informações de identificação do seu link.
+        </p>
+
+        <form @submit.prevent="saveEditedLink" style="display:flex; flex-direction:column; gap:16px;">
+          <div class="form-group">
+            <label class="form-label">Nome do Link</label>
+            <input v-model="editLinkName" type="text" class="form-control" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Plano Acesso Saúde</label>
+            <select v-model="editLinkPlanType" class="form-control" required>
+              <option value="Bronze">Plano Bronze (Promocional) — R$ 29,90/mês</option>
+              <option value="Individual">Plano Individual — R$ 39,90/mês</option>
+              <option value="Família">Plano Família — R$ 84,90/mês</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Código de Indicação (Ref)</label>
+            <input v-model="editLinkRefCode" type="text" class="form-control" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Status do Link</label>
+            <select v-model="editLinkStatus" class="form-control" required>
+              <option value="Ativo">Ativo</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top: 12px;">
+            <button type="button" class="btn btn-outline" style="flex:1;" @click="showEditLinkModal = false">Cancelar</button>
+            <button type="submit" class="btn btn-secondary" style="flex:1;">Salvar Alterações</button>
+          </div>
+        </form>
       </div>
     </div>
 
