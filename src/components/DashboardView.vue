@@ -1609,6 +1609,12 @@ const finishCheckout = () => {
   position: relative;
 }
 
+.card-details-modal .form-label,
+.card-details-modal label {
+  color: #f1f5f9 !important;
+  font-weight: 500;
+}
+
 .modal-close {
   position: absolute;
   top: 16px;
