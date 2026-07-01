@@ -28,8 +28,8 @@ const slides = ref([
     tag: 'Destaque'
   },
   {
-    title: 'Clube de Descontos Farmácias',
-    description: 'Até 50% de desconto em medicamentos e exames nas maiores redes nacionais credenciadas.',
+    title: 'Clube de Descontos & Lojas',
+    description: 'Até 50% de desconto em farmácias, cinemas, e-commerce e lojas parceiras de todo o Brasil.',
     image: '/clube_banner.png',
     tag: 'Economia'
   }
@@ -134,7 +134,7 @@ const recentActivities = ref([
             <span>Economia Acumulada</span>
           </div>
           <h3>R$ 145,90</h3>
-          <p>Economizados com descontos em farmácias este mês</p>
+          <p>Economizados com descontos em lojas e farmácias este mês</p>
         </div>
         <div class="metric-card card">
           <div class="metric-header">
@@ -200,7 +200,7 @@ const recentActivities = ref([
               </div>
               <div class="shortcut-details">
                 <h3>Clube de Descontos</h3>
-                <p>Descontos nas redes conveniadas Sabin, Raia, e mais</p>
+                <p>Economia em farmácias, cinemas, lazer e lojas parceiras</p>
               </div>
               <i class="ph ph-caret-right action-arrow"></i>
             </div>
