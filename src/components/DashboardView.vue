@@ -115,6 +115,83 @@ const copyLink = (text) => {
     message: 'Link de afiliação copiado para sua área de transferência com sucesso.'
   })
 }
+
+// Lógica de Gerador de Links de Checkout
+const showCreateLinkModal = ref(false)
+const selectedPlan = ref('Bronze')
+const refCodeInput = ref('joao-silva-123')
+const selectedPayment = ref('ambos')
+
+const userLinks = ref([
+  {
+    name: 'Checkout - Plano Bronze (Individual)',
+    planType: 'Bronze',
+    desc: 'Link de checkout direto para indicação do Plano Bronze',
+    price: 'R$ 29,90/mês',
+    payment: 'Cartão ou PIX',
+    url: 'https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123',
+    cliques: 845,
+    conversoes: 25,
+    comissao: 'R$ 2.450,00',
+    status: 'Ativo'
+  },
+  {
+    name: 'Checkout - Plano Prata (Familiar)',
+    planType: 'Prata',
+    desc: 'Link de checkout direto para indicação do Plano Prata',
+    price: 'R$ 59,90/mês',
+    payment: 'Cartão ou PIX',
+    url: 'https://checkout.acessosaude.com/plano-prata?ref=joao-silva-123',
+    cliques: 482,
+    conversoes: 14,
+    comissao: 'R$ 1.120,50',
+    status: 'Ativo'
+  },
+  {
+    name: 'Checkout - Plano Ouro (Premium)',
+    planType: 'Ouro',
+    desc: 'Link de checkout direto para indicação do Plano Ouro',
+    price: 'R$ 99,90/mês',
+    payment: 'Cartão ou PIX',
+    url: 'https://checkout.acessosaude.com/plano-ouro?ref=joao-silva-123',
+    cliques: 143,
+    conversoes: 3,
+    comissao: 'R$ 277,00',
+    status: 'Ativo'
+  }
+])
+
+const generateNewLink = () => {
+  let planPrice = 'R$ 29,90/mês'
+  if (selectedPlan.value === 'Prata') planPrice = 'R$ 59,90/mês'
+  if (selectedPlan.value === 'Ouro') planPrice = 'R$ 99,90/mês'
+
+  let paymentMethod = 'Cartão ou PIX'
+  if (selectedPayment.value === 'cartao') paymentMethod = 'Apenas Cartão'
+  if (selectedPayment.value === 'pix') paymentMethod = 'Apenas PIX'
+
+  const refCode = refCodeInput.value || 'joao-silva-123'
+  const finalUrl = `https://checkout.acessosaude.com/plano-${selectedPlan.value.toLowerCase()}?ref=${refCode}`
+
+  userLinks.value.unshift({
+    name: `Checkout - Plano ${selectedPlan.value} (${selectedPlan.value === 'Bronze' ? 'Individual' : selectedPlan.value === 'Prata' ? 'Familiar' : 'Premium'})`,
+    planType: selectedPlan.value,
+    desc: `Link de checkout direto para indicação do Plano ${selectedPlan.value}`,
+    price: planPrice,
+    payment: paymentMethod,
+    url: finalUrl,
+    cliques: 0,
+    conversoes: 0,
+    comissao: 'R$ 0,00',
+    status: 'Ativo'
+  })
+
+  showCreateLinkModal.value = false
+  emit('triggerDevModal', {
+    title: 'Link Gerado!',
+    message: `Seu link de indicação para o Plano ${selectedPlan.value} foi gerado e adicionado à lista.`
+  })
+}
 </script>
 
 <template>
@@ -871,33 +948,32 @@ const copyLink = (text) => {
         </div>
       </div>
 
-      <!-- SUB-ABA 4: MEUS LINKS -->
+      <!-- SUB-ABA 4: MEUS LINKS (Dinâmico) -->
       <div v-if="activeRefTab === 'links'" class="ref-sub-content">
         <header class="tab-header">
           <h2>Seus Links de Indicação</h2>
           <p>Crie, gerencie e acompanhe a performance dos seus links de divulgação.</p>
         </header>
 
-        <button class="btn btn-secondary" style="margin-bottom: 24px;" @click="emit('triggerDevModal', { title: 'Novo Link', message: 'Abrindo o assistente para criação de novo link de afiliado...' })">
+        <button class="btn btn-secondary" style="margin-bottom: 24px;" @click="showCreateLinkModal = true">
           <i class="ph ph-plus"></i> Criar Novo Link
         </button>
 
-        <!-- Link Plano Bronze -->
-        <div class="card link-sharing-card">
+        <div v-for="(linkItem, index) in userLinks" :key="index" class="card link-sharing-card">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">Checkout - Plano Bronze (Individual)</h4>
-              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Link de checkout direto para indicação do Plano Bronze</p>
+              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">{{ linkItem.name }}</h4>
+              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">{{ linkItem.desc }}</p>
             </div>
             <div style="text-align: right;">
-              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">Ativo</span>
-              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>Cartão ou PIX</strong></div>
+              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">{{ linkItem.status }}</span>
+              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>{{ linkItem.payment }}</strong></div>
             </div>
           </div>
 
           <div class="link-input-group">
-            <input type="text" class="link-input" value="https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123" readonly />
-            <button class="btn btn-primary" @click="copyLink('https://checkout.acessosaude.com/plano-bronze?ref=joao-silva-123')">
+            <input type="text" class="link-input" :value="linkItem.url" readonly />
+            <button class="btn btn-primary" @click="copyLink(linkItem.url)">
               <i class="ph ph-copy"></i> Copiar
             </button>
           </div>
@@ -905,119 +981,70 @@ const copyLink = (text) => {
           <div class="sharing-metrics">
             <div class="sharing-metric-box">
               <span>Valor do Plano</span>
-              <strong style="color: var(--secondary);">R$ 29,90/mês</strong>
+              <strong style="color: var(--secondary);">{{ linkItem.price }}</strong>
             </div>
             <div class="sharing-metric-box">
               <span>Cliques</span>
-              <strong>845</strong>
+              <strong>{{ linkItem.cliques }}</strong>
             </div>
             <div class="sharing-metric-box">
               <span>Conversões</span>
-              <strong>25</strong>
+              <strong>{{ linkItem.conversoes }}</strong>
             </div>
             <div class="sharing-metric-box">
               <span>Comissão Gerada</span>
-              <strong style="color: #16a34a;">R$ 2.450,00</strong>
+              <strong style="color: #16a34a;">{{ linkItem.comissao }}</strong>
             </div>
           </div>
 
           <div class="sharing-actions">
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do Plano Bronze...' })"><i class="ph ph-share"></i> Compartilhar</button>
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
-          </div>
-        </div>
-
-        <!-- Link Plano Prata -->
-        <div class="card link-sharing-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-            <div>
-              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">Checkout - Plano Prata (Familiar)</h4>
-              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Link de checkout direto para indicação do Plano Prata</p>
-            </div>
-            <div style="text-align: right;">
-              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">Ativo</span>
-              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>Cartão ou PIX</strong></div>
-            </div>
-          </div>
-
-          <div class="link-input-group">
-            <input type="text" class="link-input" value="https://checkout.acessosaude.com/plano-prata?ref=joao-silva-123" readonly />
-            <button class="btn btn-primary" @click="copyLink('https://checkout.acessosaude.com/plano-prata?ref=joao-silva-123')">
-              <i class="ph ph-copy"></i> Copiar
-            </button>
-          </div>
-
-          <div class="sharing-metrics">
-            <div class="sharing-metric-box">
-              <span>Valor do Plano</span>
-              <strong style="color: var(--secondary);">R$ 59,90/mês</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Cliques</span>
-              <strong>482</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Conversões</span>
-              <strong>14</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Comissão Gerada</span>
-              <strong style="color: #16a34a;">R$ 1.120,50</strong>
-            </div>
-          </div>
-
-          <div class="sharing-actions">
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do Plano Prata...' })"><i class="ph ph-share"></i> Compartilhar</button>
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
-          </div>
-        </div>
-
-        <!-- Link Plano Ouro -->
-        <div class="card link-sharing-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-            <div>
-              <h4 style="font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 2px;">Checkout - Plano Ouro (Premium)</h4>
-              <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 0;">Link de checkout direto para indicação do Plano Ouro</p>
-            </div>
-            <div style="text-align: right;">
-              <span class="badge badge-success" style="font-size: 11px; margin-bottom: 4px; display: inline-block;">Ativo</span>
-              <div style="font-size: 12px; color: var(--text-gray);">Pagamento: <strong>Cartão ou PIX</strong></div>
-            </div>
-          </div>
-
-          <div class="link-input-group">
-            <input type="text" class="link-input" value="https://checkout.acessosaude.com/plano-ouro?ref=joao-silva-123" readonly />
-            <button class="btn btn-primary" @click="copyLink('https://checkout.acessosaude.com/plano-ouro?ref=joao-silva-123')">
-              <i class="ph ph-copy"></i> Copiar
-            </button>
-          </div>
-
-          <div class="sharing-metrics">
-            <div class="sharing-metric-box">
-              <span>Valor do Plano</span>
-              <strong style="color: var(--secondary);">R$ 99,90/mês</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Cliques</span>
-              <strong>143</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Conversões</span>
-              <strong>3</strong>
-            </div>
-            <div class="sharing-metric-box">
-              <span>Comissão Gerada</span>
-              <strong style="color: #16a34a;">R$ 277,00</strong>
-            </div>
-          </div>
-
-          <div class="sharing-actions">
-            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: 'Gerando opções de compartilhamento do Plano Ouro...' })"><i class="ph ph-share"></i> Compartilhar</button>
+            <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Compartilhar', message: `Gerando opções de compartilhamento do link para o Plano ${linkItem.planType}...` })"><i class="ph ph-share"></i> Compartilhar</button>
             <button class="btn btn-outline" @click="emit('triggerDevModal', { title: 'Relatório', message: 'Carregando relatório detalhado de cliques...' })"><i class="ph ph-chart-bar"></i> Ver Relatório</button>
           </div>
         </div>
       </div>
 
+    </div>
+
+    <!-- MODAL DE CRIAÇÃO DE LINK DE CHECKOUT -->
+    <div v-if="showCreateLinkModal" class="sso-overlay-custom" @click.self="showCreateLinkModal = false">
+      <div class="card-details-modal" style="max-width: 460px;">
+        <div class="modal-close" @click="showCreateLinkModal = false"><i class="ph ph-x"></i></div>
+        <h3 style="font-size: 20px; color: var(--secondary); margin-bottom: 8px;">Gerar Link de Checkout</h3>
+        <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
+          Selecione o plano desejado para gerar uma URL de indicação direta de vendas.
+        </p>
+        
+        <form @submit.prevent="generateNewLink" style="display:flex; flex-direction:column; gap:16px;">
+          <div class="form-group">
+            <label class="form-label">Plano Acesso Saúde</label>
+            <select v-model="selectedPlan" class="form-control" required>
+              <option value="Bronze">Plano Bronze — R$ 29,90/mês</option>
+              <option value="Prata">Plano Prata — R$ 59,90/mês</option>
+              <option value="Ouro">Plano Ouro — R$ 99,90/mês</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Código de Indicação (Ref)</label>
+            <input v-model="refCodeInput" type="text" class="form-control" placeholder="joao-silva-123" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Meio de Pagamento Aceito</label>
+            <select v-model="selectedPayment" class="form-control" required>
+              <option value="ambos">Cartão de Crédito ou PIX</option>
+              <option value="cartao">Apenas Cartão de Crédito</option>
+              <option value="pix">Apenas PIX</option>
+            </select>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top: 8px;">
+            <button type="button" class="btn btn-outline" style="flex:1;" @click="showCreateLinkModal = false">Cancelar</button>
+            <button type="submit" class="btn btn-secondary" style="flex:1;">Gerar Link</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- MODAL DE CARTEIRINHA DIGITAL DETALHADA -->
