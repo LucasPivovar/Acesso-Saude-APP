@@ -1144,6 +1144,57 @@ const saveEditedLink = () => {
               </div>
             </div>
 
+        </div>
+
+        <!-- Detalhamento de Comissões (Julho) -->
+        <div class="card animated-item" style="padding: 24px; margin-top: 24px; animation-delay: 0.45s;">
+          <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 20px;">Detalhamento de Comissões (Julho)</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- 1º Nível -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-dark);">1º Nível - Indicações Diretas</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">15 pessoas ativas • 15 × R$ 10,00</span>
+              </div>
+              <strong style="color: #1d4ed8; font-size: 16px;">R$ 150,00</strong>
+            </div>
+
+            <!-- 2º Nível -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-dark);">2º Nível</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">20 pessoas ativas • 20 × R$ 5,00</span>
+              </div>
+              <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
+            </div>
+
+            <!-- 3º Nível -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-dark);">3º Nível</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">20 pessoas ativas • 20 × R$ 5,00</span>
+              </div>
+              <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
+            </div>
+
+            <!-- 4º Nível -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-dark);">4º Nível</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">25 pessoas ativas • 25 × R$ 2,75</span>
+              </div>
+              <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
+            </div>
+
+            <!-- 5º Nível -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 4px;">
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-dark);">5º Nível</strong>
+                <span style="font-size: 12px; color: var(--text-gray);">25 pessoas ativas • 25 × R$ 2,75</span>
+              </div>
+              <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
+            </div>
           </div>
         </div>
       </div>
