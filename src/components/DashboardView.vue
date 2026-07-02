@@ -1184,7 +1184,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 150,00</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Carlos Silva (Individual)</span>
                   <strong>+ R$ 10,00</strong>
@@ -1221,7 +1221,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #8b5cf6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #8b5cf6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Ana Martins (Família)</span>
                   <strong>+ R$ 5,00</strong>
@@ -1252,7 +1252,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #ec4899; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #ec4899; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Pedro Santos (Individual)</span>
                   <strong>+ R$ 5,00</strong>
@@ -1282,7 +1282,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Bruno Alves (Bronze)</span>
                   <strong>+ R$ 2,75</strong>
@@ -1307,7 +1307,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Clara Mendes (Bronze)</span>
                   <strong>+ R$ 2,75</strong>
