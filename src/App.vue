@@ -44,6 +44,16 @@ const handleUpdateUser = (updatedData) => {
 const navigateTo = (tab) => {
   currentTab.value = tab
   showDropdown.value = false
+  
+  // Atualiza a URL sem recarregar a página
+  let path = '/'
+  if (tab === 'indicacoes') path = '/indicacoes'
+  else if (tab === 'configuracoes') path = '/configuracoes'
+  else if (tab === 'perfil') path = '/meu-perfil'
+  else if (tab === 'financeiro') path = '/financeiro'
+  else if (tab === 'admin') path = '/admin'
+  
+  window.history.pushState({ tab }, '', path)
 }
 
 const openDevModal = (data) => {
@@ -51,15 +61,31 @@ const openDevModal = (data) => {
   showDevModal.value = true
 }
 
-onMounted(() => {
+const handleRouting = () => {
   const path = window.location.pathname
   const hash = window.location.hash
+  
   if (path === '/admin' || hash === '#/admin') {
     currentTab.value = 'admin'
     if (!isLoggedIn.value) {
       isLoggedIn.value = true
     }
+  } else if (path === '/indicacoes' || hash === '#/indicacoes') {
+    currentTab.value = 'indicacoes'
+  } else if (path === '/configuracoes' || hash === '#/configuracoes') {
+    currentTab.value = 'configuracoes'
+  } else if (path === '/meu-perfil' || hash === '#/meu-perfil') {
+    currentTab.value = 'perfil'
+  } else if (path === '/financeiro' || hash === '#/financeiro') {
+    currentTab.value = 'financeiro'
+  } else {
+    currentTab.value = 'home'
   }
+}
+
+onMounted(() => {
+  handleRouting()
+  window.addEventListener('popstate', handleRouting)
 })
 </script>
 
