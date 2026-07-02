@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import LoginView from './components/LoginView.vue'
 import DashboardView from './components/DashboardView.vue'
 import AdminView from './components/AdminView.vue'
@@ -21,9 +21,18 @@ const layoutMode = ref(window.innerWidth < 768 ? 'pwa' : 'desktop')
 // Dropdown de perfil no Desktop
 const showDropdown = ref(false)
 
+// Dropdown de Indicações no Mobile
+const activeRefTab = ref('visaoGeral')
+const showRefMenuDropdown = ref(false)
+
 // Modal Global de Desenvolvimento
 const showDevModal = ref(false)
 const devModalData = ref({ title: '', message: '' })
+
+// Controla scroll do body quando modal está aberto
+watch(showDevModal, (val) => {
+  document.body.style.overflow = val ? 'hidden' : ''
+})
 
 const handleLogin = (userData) => {
   currentUser.value = userData
@@ -185,8 +194,32 @@ onMounted(() => {
         </div>
 
         <!-- Cabeçalho PWA -->
-        <header class="pwa-header">
-          <img src="/logo.png" alt="Acesso Saúde" class="pwa-logo" />
+        <header class="pwa-header" style="position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px 16px; background: white; border-bottom: 1px solid var(--border-color);">
+          <div @click="navigateTo('home')" style="cursor: pointer; display: flex; align-items: center;">
+            <img src="/logo.png" alt="Acesso Saúde" class="pwa-logo" style="max-height: 32px;" />
+          </div>
+          
+          <!-- Menu com 3 riscos (no text) se estiver na aba Indicações -->
+          <div v-if="currentTab === 'indicacoes'" style="position: relative; display: flex; align-items: center;">
+            <button @click.stop="showRefMenuDropdown = !showRefMenuDropdown" style="background: transparent; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center;">
+              <i class="ph ph-list" style="font-size: 26px; color: var(--secondary);"></i>
+            </button>
+            
+            <div v-if="showRefMenuDropdown" class="dropdown-menu show" style="position: absolute; right: 0; top: 110%; z-index: 99999; width: 180px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); background: white; padding: 6px; display: flex; flex-direction: column;">
+              <button class="dropdown-item" :class="{ active: activeRefTab === 'visaoGeral' }" @click="activeRefTab = 'visaoGeral'; showRefMenuDropdown = false" style="width: 100%; border: none; background: transparent; padding: 8px 12px; text-align: left; font-size: 13px; cursor: pointer;">
+                Visão Geral
+              </button>
+              <button class="dropdown-item" :class="{ active: activeRefTab === 'indicados' }" @click="activeRefTab = 'indicados'; showRefMenuDropdown = false" style="width: 100%; border: none; background: transparent; padding: 8px 12px; text-align: left; font-size: 13px; cursor: pointer;">
+                Meus Indicados
+              </button>
+              <button class="dropdown-item" :class="{ active: activeRefTab === 'financeiroRef' }" @click="activeRefTab = 'financeiroRef'; showRefMenuDropdown = false" style="width: 100%; border: none; background: transparent; padding: 8px 12px; text-align: left; font-size: 13px; cursor: pointer;">
+                Financeiro
+              </button>
+              <button class="dropdown-item" :class="{ active: activeRefTab === 'links' }" @click="activeRefTab = 'links'; showRefMenuDropdown = false" style="width: 100%; border: none; background: transparent; padding: 8px 12px; text-align: left; font-size: 13px; cursor: pointer;">
+                Meus Links
+              </button>
+            </div>
+          </div>
         </header>
 
         <!-- Corpo do PWA -->
@@ -201,22 +234,17 @@ onMounted(() => {
             :user="currentUser" 
             :layoutMode="'pwa'"
             :currentTab="currentTab"
+            :activeRefTab="activeRefTab"
             @updateUser="handleUpdateUser"
             @logout="handleLogout"
             @triggerDevModal="openDevModal"
             @changeTab="navigateTo"
+            @changeRefTab="(tab) => activeRefTab = tab"
           />
         </main>
 
-        <!-- Menu de Navegação Inferior PWA -->
+        <!-- Menu de Navegação Inferior PWA (sem o botão início) -->
         <nav class="pwa-bottom-nav">
-          <button 
-            :class="['pwa-nav-item', { active: currentTab === 'home' }]"
-            @click="navigateTo('home')"
-          >
-            <i class="ph ph-squares-four"></i>
-            <span>Início</span>
-          </button>
           <button 
             :class="['pwa-nav-item', { active: currentTab === 'indicacoes' }]"
             @click="navigateTo('indicacoes')"

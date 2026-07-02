@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 const props = defineProps({
   layoutMode: {
@@ -35,6 +35,12 @@ const showConfigModal = ref(false)
 const showTreeModal = ref(false)
 const selectedTreeUser = ref(null)
 const editingUser = ref(null)
+
+// Controla scroll do body quando modal está aberto no Admin
+watch([showRegisterModal, showConfigModal, showTreeModal, editingUser], (vals) => {
+  const isOpen = vals.some(v => !!v)
+  document.body.style.overflow = isOpen ? 'hidden' : ''
+})
 
 // Histórico Financeiro do Admin (Renovações e Comissões)
 const billingHistory = ref([

@@ -872,4 +872,51 @@ input:checked + .slider:before {
     width: 100% !important;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
   }
+
+  /* Oculta abas horizontais de indicação no mobile (substituído pelo menu do topo) */
+  .pwa .referral-tabs {
+    display: none !important;
+  }
+
+  /* Deixa links de indicação em coluna única no mobile */
+  .pwa .sharing-metrics {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .pwa .sharing-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .pwa .sharing-actions .btn {
+    width: 100% !important;
+  }
+
+  /* Botões do Admin 100% no mobile */
+  .pwa .action-buttons-header {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .pwa .action-buttons-header .btn {
+    width: 100% !important;
+  }
+
+  /* Tabelas com scroll horizontal no mobile */
+  .admin-table, .referral-table {
+    display: block !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Modal scrollable */
+  .custom-modal-card, .modal-large {
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
 }

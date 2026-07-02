@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const props = defineProps({
   user: {
@@ -13,10 +13,14 @@ const props = defineProps({
   currentTab: {
     type: String,
     default: 'home'
+  },
+  activeRefTab: {
+    type: String,
+    default: 'visaoGeral'
   }
 })
 
-const emit = defineEmits(['updateUser', 'logout', 'triggerDevModal', 'changeTab'])
+const emit = defineEmits(['updateUser', 'logout', 'triggerDevModal', 'changeTab', 'changeRefTab'])
 
 // Carrossel Contínuo
 const activeSlide = ref(0)
@@ -85,6 +89,10 @@ const recentActivities = ref([
 // Programa de Indicações (Afiliação)
 import { computed } from 'vue'
 const activeRefTab = ref('visaoGeral')
+watch(() => props.activeRefTab, (newVal) => {
+  if (newVal) activeRefTab.value = newVal
+}, { immediate: true })
+
 const refSearchName = ref('')
 const refStatusFilter = ref('todos')
 const refLevelFilter = ref('todos')
@@ -398,6 +406,12 @@ const saveEditedLink = () => {
     message: 'As alterações do link de indicação foram salvas com sucesso.'
   })
 }
+
+// Controla scroll do body quando qualquer modal do cliente está aberto
+watch([showCardModal, showCheckoutModal, showShareModal, showReportModal, showEditLinkModal, showCreateLinkModal], (vals) => {
+  const isOpen = vals.some(v => !!v)
+  document.body.style.overflow = isOpen ? 'hidden' : ''
+})
 </script>
 
 <template>
