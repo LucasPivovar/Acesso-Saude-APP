@@ -1198,6 +1198,7 @@ const saveEditedLink = () => {
           </div>
         </div>
       </div>
+    </div>
 
       <!-- SUB-ABA 4: MEUS LINKS (Dinâmico) -->
       <div v-if="activeRefTab === 'links'" class="ref-sub-content">
