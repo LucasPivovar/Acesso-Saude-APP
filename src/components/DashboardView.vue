@@ -89,6 +89,12 @@ const refSearchName = ref('')
 const refStatusFilter = ref('todos')
 const refLevelFilter = ref('todos')
 
+const showLevel1Details = ref(false)
+const showLevel2Details = ref(false)
+const showLevel3Details = ref(false)
+const showLevel4Details = ref(false)
+const showLevel5Details = ref(false)
+
 const rawReferrals = ref([
   { name: 'Carlos Silva', email: 'carlos@email.com', level: '1º Nível', status: 'ativo', date: '03/06/2026', gain: 'R$ 10,00' },
   { name: 'Marina Costa', email: 'marina@email.com', level: '1º Nível', status: 'pendente', date: '28/05/2026', gain: '-' },
@@ -962,25 +968,43 @@ const saveEditedLink = () => {
         <div class="card animated-item" style="padding: 24px; margin-top: 24px; animation-delay: 0.4s;">
           <h3 style="font-size: 18px; color: var(--secondary); margin-bottom: 16px;">Últimas Indicações</h3>
           <div class="activities-list" style="display: flex; flex-direction: column; gap: 16px;">
-            <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-              <div class="user-avatar-mini">CS</div>
-              <div>
-                <strong style="color: var(--text-dark); display:block; font-size: 14px;">Carlos Silva</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">Indicado há 3 dias • 1º Nível • <span class="badge badge-success" style="font-size:10px; padding: 2px 6px;">Ativo</span></span>
+            <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="user-avatar-mini">CS</div>
+                <div>
+                  <strong style="color: var(--text-dark); display:block; font-size: 14px;">Carlos Silva</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">Indicado há 3 dias • 1º Nível • <span class="badge badge-success" style="font-size:10px; padding: 2px 6px;">Ativo</span></span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block;">Plano Individual</span>
+                <strong style="font-size: 12px; color: #16a34a; margin-top: 2px; display: block;">+ R$ 8,00/mês</strong>
               </div>
             </div>
-            <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-              <div class="user-avatar-mini">MC</div>
-              <div>
-                <strong style="color: var(--text-dark); display:block; font-size: 14px;">Marina Costa</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">Indicada há 5 dias • 1º Nível • <span class="badge badge-warning" style="font-size:10px; padding: 2px 6px;">Pendente</span></span>
+            <div class="activity-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="user-avatar-mini">MC</div>
+                <div>
+                  <strong style="color: var(--text-dark); display:block; font-size: 14px;">Marina Costa</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">Indicada há 5 dias • 1º Nível • <span class="badge badge-warning" style="font-size:10px; padding: 2px 6px;">Pendente</span></span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block;">Plano Individual</span>
+                <strong style="font-size: 12px; color: var(--text-gray); margin-top: 2px; display: block;">R$ 0,00 (Pendente)</strong>
               </div>
             </div>
-            <div class="activity-item">
-              <div class="user-avatar-mini">JP</div>
-              <div>
-                <strong style="color: var(--text-dark); display:block; font-size: 14px;">João Pereira</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">Indicado há 7 dias • 1º Nível • <span class="badge badge-success" style="font-size:10px; padding: 2px 6px;">Ativo</span></span>
+            <div class="activity-item" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="user-avatar-mini">JP</div>
+                <div>
+                  <strong style="color: var(--text-dark); display:block; font-size: 14px;">João Pereira</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">Indicado há 7 dias • 1º Nível • <span class="badge badge-success" style="font-size:10px; padding: 2px 6px;">Ativo</span></span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block;">Plano Família</span>
+                <strong style="font-size: 12px; color: #16a34a; margin-top: 2px; display: block;">+ R$ 20,00/mês</strong>
               </div>
             </div>
           </div>
@@ -1160,7 +1184,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 150,00</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Carlos Silva (Individual)</span>
                   <strong>+ R$ 10,00</strong>
@@ -1173,7 +1197,18 @@ const saveEditedLink = () => {
                   <span>João Pereira (Individual)</span>
                   <strong>+ R$ 10,00</strong>
                 </div>
-                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 12 indicados diretos ativos</span>
+                
+                <!-- Ver Mais do Nível 1 -->
+                <button @click="showLevel1Details = !showLevel1Details" style="background: none; border: none; color: #1d4ed8; font-size: 11px; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 4px 0; text-align: center; width: 100%;">
+                  {{ showLevel1Details ? 'Ocultar Detalhes' : 'Ver mais 12 indicados diretos ativos...' }}
+                </button>
+                <div v-if="showLevel1Details" style="display: flex; flex-direction: column; gap: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0;">
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>José Lima (Individual)</span><strong>+ R$ 10,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Felipe Melo (Família)</span><strong>+ R$ 20,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Patrícia Dias (Individual)</span><strong>+ R$ 10,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Sandra Reis (Individual)</span><strong>+ R$ 10,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Roberto Cruz (Individual)</span><strong>+ R$ 10,00</strong></div>
+                </div>
               </div>
             </div>
 
@@ -1186,7 +1221,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #8b5cf6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #8b5cf6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Ana Martins (Família)</span>
                   <strong>+ R$ 5,00</strong>
@@ -1195,7 +1230,16 @@ const saveEditedLink = () => {
                   <span>Lucas Souza (Família)</span>
                   <strong>+ R$ 5,00</strong>
                 </div>
-                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 18 indicados indiretos ativos</span>
+                
+                <!-- Ver Mais do Nível 2 -->
+                <button @click="showLevel2Details = !showLevel2Details" style="background: none; border: none; color: #1d4ed8; font-size: 11px; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 4px 0; text-align: center; width: 100%;">
+                  {{ showLevel2Details ? 'Ocultar Detalhes' : 'Ver mais 18 indicados indiretos ativos...' }}
+                </button>
+                <div v-if="showLevel2Details" style="display: flex; flex-direction: column; gap: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0;">
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Camila Lopes (Individual)</span><strong>+ R$ 5,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Rodrigo Faro (Família)</span><strong>+ R$ 10,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Mariana Rios (Individual)</span><strong>+ R$ 5,00</strong></div>
+                </div>
               </div>
             </div>
 
@@ -1208,7 +1252,7 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #ec4899; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #ec4899; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Pedro Santos (Individual)</span>
                   <strong>+ R$ 5,00</strong>
@@ -1217,7 +1261,15 @@ const saveEditedLink = () => {
                   <span>Júlia Ramos (Individual)</span>
                   <strong>+ R$ 5,00</strong>
                 </div>
-                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 18 indicados indiretos ativos</span>
+                
+                <!-- Ver Mais do Nível 3 -->
+                <button @click="showLevel3Details = !showLevel3Details" style="background: none; border: none; color: #1d4ed8; font-size: 11px; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 4px 0; text-align: center; width: 100%;">
+                  {{ showLevel3Details ? 'Ocultar Detalhes' : 'Ver mais 18 indicados indiretos ativos...' }}
+                </button>
+                <div v-if="showLevel3Details" style="display: flex; flex-direction: column; gap: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0;">
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Fernanda Lima (Individual)</span><strong>+ R$ 5,00</strong></div>
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Otávio Mesquita (Família)</span><strong>+ R$ 10,00</strong></div>
+                </div>
               </div>
             </div>
 
@@ -1230,12 +1282,19 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Bruno Alves (Bronze)</span>
                   <strong>+ R$ 2,75</strong>
                 </div>
-                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 24 indicados indiretos ativos</span>
+                
+                <!-- Ver Mais do Nível 4 -->
+                <button @click="showLevel4Details = !showLevel4Details" style="background: none; border: none; color: #1d4ed8; font-size: 11px; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 4px 0; text-align: center; width: 100%;">
+                  {{ showLevel4Details ? 'Ocultar Detalhes' : 'Ver mais 24 indicados indiretos ativos...' }}
+                </button>
+                <div v-if="showLevel4Details" style="display: flex; flex-direction: column; gap: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0;">
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Daniela Mercury (Individual)</span><strong>+ R$ 2,75</strong></div>
+                </div>
               </div>
             </div>
 
@@ -1248,12 +1307,19 @@ const saveEditedLink = () => {
                 </div>
                 <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
               </div>
-              <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
+              <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
                   <span>Clara Mendes (Bronze)</span>
                   <strong>+ R$ 2,75</strong>
                 </div>
-                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 24 indicados indiretos ativos</span>
+                
+                <!-- Ver Mais do Nível 5 -->
+                <button @click="showLevel5Details = !showLevel5Details" style="background: none; border: none; color: #1d4ed8; font-size: 11px; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 4px 0; text-align: center; width: 100%;">
+                  {{ showLevel5Details ? 'Ocultar Detalhes' : 'Ver mais 24 indicados indiretos ativos...' }}
+                </button>
+                <div v-if="showLevel5Details" style="display: flex; flex-direction: column; gap: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0;">
+                  <div style="display: flex; justify-content: space-between; color: var(--text-dark);"><span>Eduardo Costa (Bronze)</span><strong>+ R$ 2,75</strong></div>
+                </div>
               </div>
             </div>
           </div>
