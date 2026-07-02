@@ -810,33 +810,33 @@ const saveEditedLink = () => {
     <!-- ABA 5: PROGRAMA DE INDICAÇÕES -->
     <div v-if="currentTab === 'indicacoes'" class="tab-content animated-item" style="animation-delay: 0s;">
       
-      <!-- Cabeçalho do Programa de Indicações (Logo + Dropdown) -->
-      <div class="indicacoes-header-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 24px; box-shadow: var(--shadow-sm); position: relative;">
-        <div style="display: flex; align-items: center;">
-          <img src="/logo.png" alt="Acesso Saúde" style="height: 32px;" />
-        </div>
-        
-        <div style="position: relative;">
-          <button @click="showRefMenuDropdown = !showRefMenuDropdown" class="btn btn-outline" style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 8px 16px;">
-            <i class="ph ph-list" style="font-size: 18px;"></i> Menu Indicações
-          </button>
-          
-          <div v-if="showRefMenuDropdown" class="dropdown-menu show" style="position: absolute; right: 0; top: 110%; z-index: 1000; width: 220px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); background: white; padding: 6px; text-align: left;">
-            <button class="dropdown-item" :class="{ active: activeRefTab === 'visaoGeral' }" @click="activeRefTab = 'visaoGeral'; showRefMenuDropdown = false" style="width: 100%; display: flex; align-items: center; gap: 8px; text-align: left;">
-              <i class="ph ph-squares-four"></i> Visão Geral
-            </button>
-            <button class="dropdown-item" :class="{ active: activeRefTab === 'indicados' }" @click="activeRefTab = 'indicados'; showRefMenuDropdown = false" style="width: 100%; display: flex; align-items: center; gap: 8px; text-align: left;">
-              <i class="ph ph-users"></i> Meus Indicados
-            </button>
-            <button class="dropdown-item" :class="{ active: activeRefTab === 'financeiroRef' }" @click="activeRefTab = 'financeiroRef'; showRefMenuDropdown = false" style="width: 100%; display: flex; align-items: center; gap: 8px; text-align: left;">
-              <i class="ph ph-hand-coins"></i> Financeiro
-            </button>
-            <button class="dropdown-item" :class="{ active: activeRefTab === 'links' }" @click="activeRefTab = 'links'; showRefMenuDropdown = false" style="width: 100%; display: flex; align-items: center; gap: 8px; text-align: left;">
-              <i class="ph ph-link"></i> Meus Links
-            </button>
-          </div>
-        </div>
-      </div>
+      <!-- Sub-Abas do Programa de Indicações -->
+      <nav class="referral-tabs">
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'visaoGeral' }]"
+          @click="activeRefTab = 'visaoGeral'"
+        >
+          <i class="ph ph-squares-four"></i> Visão Geral
+        </button>
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'indicados' }]"
+          @click="activeRefTab = 'indicados'"
+        >
+          <i class="ph ph-users"></i> Meus Indicados
+        </button>
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'financeiroRef' }]"
+          @click="activeRefTab = 'financeiroRef'"
+        >
+          <i class="ph ph-hand-coins"></i> Financeiro
+        </button>
+        <button 
+          :class="['ref-tab-btn', { active: activeRefTab === 'links' }]"
+          @click="activeRefTab = 'links'"
+        >
+          <i class="ph ph-link"></i> Meus Links
+        </button>
+      </nav>
 
       <!-- SUB-ABA 1: VISÃO GERAL -->
       <div v-if="activeRefTab === 'visaoGeral'" class="ref-sub-content">
