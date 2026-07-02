@@ -423,7 +423,7 @@ const saveEditedLink = () => {
             v-for="(slide, idx) in slides" 
             :key="idx" 
             class="slide-item"
-            :style="{ backgroundImage: `linear-gradient(rgba(16, 66, 70, 0.9), rgba(16, 66, 70, 0.75)), url(${slide.image})` }"
+            :style="{ backgroundImage: `linear-gradient(135deg, #104246 0%, #1a5c61 100%)` }"
           >
             <div class="slide-content">
               <span class="badge badge-warning">{{ slide.tag }}</span>
@@ -2374,6 +2374,15 @@ const saveEditedLink = () => {
 }
 
 .pwa .financial-grid {
+  grid-template-columns: 1fr;
+}
+
+.pwa .billing-actions {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pwa .config-grid {
   grid-template-columns: 1fr;
 }
 
