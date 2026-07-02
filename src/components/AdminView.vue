@@ -29,14 +29,25 @@ const config = ref({
 // Controles de Modais
 const showRegisterModal = ref(false)
 const showConfigModal = ref(false)
+const showTreeModal = ref(false)
+const showFinanceModal = ref(false)
+const selectedTreeUser = ref(null)
 const editingUser = ref(null)
+
+// Histórico Financeiro do Admin (Renovações e Comissões)
+const billingHistory = ref([
+  { id: 1, user: 'João Silva', plan: 'Família', value: 129.90, status: 'Pago', date: '01/07/2026', commissionMmn: 50.00 },
+  { id: 2, user: 'Carlos Silva', plan: 'Individual', value: 79.90, status: 'Pago', date: '01/07/2026', commissionMmn: 20.00 },
+  { id: 3, user: 'Marina Costa', plan: 'Individual', value: 79.90, status: 'Pendente', date: '01/07/2026', commissionMmn: 0.00 },
+  { id: 4, user: 'Ana Martins', plan: 'Família', value: 129.90, status: 'Pago', date: '20/06/2026', commissionMmn: 50.00 },
+  { id: 5, user: 'Pedro Santos', plan: 'Individual', value: 79.90, status: 'Atrasado', date: '10/06/2026', commissionMmn: 0.00 }
+])
 
 // Inicialização dos dados com migração e limpeza de versões antigas do localStorage
 const initData = () => {
   const savedUsers = localStorage.getItem('acesso_saude_users')
   const savedConfig = localStorage.getItem('acesso_saude_config')
 
-  // Se o config for de versão antiga, removemos para forçar a nova estrutura MMN
   if (savedConfig) {
     try {
       const parsed = JSON.parse(savedConfig)
@@ -154,35 +165,29 @@ const calculatePrice = (userAccess, planName) => {
   return total
 }
 
-// Cálculo recursivo/dinâmico de quanto o usuário está recebendo de comissão em 5 níveis
+// Cálculo recursivo de quanto o usuário está recebendo de comissão em 5 níveis
 const calculateUserCommission = (user) => {
   let total = 0
-  
-  // Nível 1: indicados diretos por este usuário
   const lvl1 = users.value.filter(u => u.referredBy === user.name)
   lvl1.forEach(u1 => {
     const mmnVal = u1.plan === 'Família' ? config.value.planFamilyMmn : (u1.plan === 'Individual' ? config.value.planIndividualMmn : 0)
     total += (mmnVal * config.value.percentages[0]) / 100
     
-    // Nível 2: indicados diretos de u1
     const lvl2 = users.value.filter(u => u.referredBy === u1.name)
     lvl2.forEach(u2 => {
       const mmnVal2 = u2.plan === 'Família' ? config.value.planFamilyMmn : (u2.plan === 'Individual' ? config.value.planIndividualMmn : 0)
       total += (mmnVal2 * config.value.percentages[1]) / 100
       
-      // Nível 3: indicados diretos de u2
       const lvl3 = users.value.filter(u => u.referredBy === u2.name)
       lvl3.forEach(u3 => {
         const mmnVal3 = u3.plan === 'Família' ? config.value.planFamilyMmn : (u3.plan === 'Individual' ? config.value.planIndividualMmn : 0)
         total += (mmnVal3 * config.value.percentages[2]) / 100
         
-        // Nível 4: indicados diretos de u3
         const lvl4 = users.value.filter(u => u.referredBy === u3.name)
         lvl4.forEach(u4 => {
           const mmnVal4 = u4.plan === 'Família' ? config.value.planFamilyMmn : (u4.plan === 'Individual' ? config.value.planIndividualMmn : 0)
           total += (mmnVal4 * config.value.percentages[3]) / 100
           
-          // Nível 5: indicados diretos de u4
           const lvl5 = users.value.filter(u => u.referredBy === u4.name)
           lvl5.forEach(u5 => {
             const mmnVal5 = u5.plan === 'Família' ? config.value.planFamilyMmn : (u5.plan === 'Individual' ? config.value.planIndividualMmn : 0)
@@ -194,6 +199,56 @@ const calculateUserCommission = (user) => {
   })
   
   return total
+}
+
+// Retorna uma lista aninhada contendo a rede abaixo de um determinado usuário (Estrutura de Árvore/Pirâmide)
+const getReferralTree = (userName, currentLevel = 1) => {
+  if (currentLevel > 5) return []
+  const directChildren = users.value.filter(u => u.referredBy === userName)
+  
+  return directChildren.map(child => {
+    return {
+      name: child.name,
+      plan: child.plan,
+      level: child.level,
+      status: child.status,
+      depth: currentLevel,
+      children: getReferralTree(child.name, currentLevel + 1)
+    }
+  })
+}
+
+// Detalha os padrinho que receberam a comissão de uma determinada renovação
+const getCommissionReceivers = (userName, planName) => {
+  const receivers = []
+  let currentUser = users.value.find(u => u.name === userName)
+  
+  if (!currentUser) return receivers
+  
+  let currentReferrerName = currentUser.referredBy
+  let depth = 0
+  const mmnVal = planName === 'Família' ? config.value.planFamilyMmn : (planName === 'Individual' ? config.value.planIndividualMmn : 0)
+  
+  while (currentReferrerName && currentReferrerName !== 'Nenhum' && depth < 5) {
+    const parent = users.value.find(u => u.name === currentReferrerName)
+    const pct = config.value.percentages[depth]
+    const gain = (mmnVal * pct) / 100
+    
+    receivers.push({
+      level: depth + 1,
+      name: currentReferrerName,
+      gain: gain
+    })
+    
+    if (parent) {
+      currentReferrerName = parent.referredBy
+    } else {
+      break
+    }
+    depth++
+  }
+  
+  return receivers
 }
 
 // Formulário de Cadastro
@@ -237,6 +292,17 @@ const registerUser = () => {
   users.value.push(createdUser)
   saveToLocalStorage()
 
+  // Adiciona histórico financeiro inicial simulado
+  billingHistory.value.unshift({
+    id: Date.now(),
+    user: createdUser.name,
+    plan: createdUser.plan,
+    value: calculatePrice(createdUser.access, createdUser.plan),
+    status: 'Pago',
+    date: new Date().toLocaleDateString('pt-BR'),
+    commissionMmn: createdUser.plan === 'Família' ? config.value.planFamilyMmn : (createdUser.plan === 'Individual' ? config.value.planIndividualMmn : 0.00)
+  })
+
   emit('triggerDevModal', {
     title: 'Usuário Cadastrado!',
     message: `O usuário ${createdUser.name} foi criado com sucesso com acesso aos módulos configurados.`
@@ -260,6 +326,10 @@ const registerUser = () => {
 // Excluir usuário
 const deleteUser = (id) => {
   if (confirm('Tem certeza que deseja remover este usuário?')) {
+    const userToDelete = users.value.find(u => u.id === id)
+    if (userToDelete) {
+      billingHistory.value = billingHistory.value.filter(b => b.user !== userToDelete.name)
+    }
     users.value = users.value.filter(u => u.id !== id)
     saveToLocalStorage()
     emit('triggerDevModal', {
@@ -297,6 +367,11 @@ const saveRules = () => {
   })
 }
 
+const openTreeModal = (user) => {
+  selectedTreeUser.value = user
+  showTreeModal.value = true
+}
+
 // Filtro de Busca
 const searchFilter = ref('')
 const filteredUsers = computed(() => {
@@ -326,6 +401,9 @@ const filteredUsers = computed(() => {
           </button>
           <button class="btn btn-outline" @click="showConfigModal = true">
             <i class="ph ph-sliders"></i> Regras & Comissões
+          </button>
+          <button class="btn btn-outline" @click="showFinanceModal = true" style="margin-top: 4px;">
+            <i class="ph ph-chart-line-up"></i> Financeiro & Renovações
           </button>
         </div>
       </div>
@@ -408,6 +486,9 @@ const filteredUsers = computed(() => {
                   <button class="btn-action-edit" title="Editar Usuário" @click="openEditAccess(u)">
                     <i class="ph ph-pencil-simple"></i>
                   </button>
+                  <button class="btn-action-tree" title="Visualizar Rede MMN" @click="openTreeModal(u)" style="color: #7c3aed; background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 6px; border-radius: var(--radius-sm);">
+                    <i class="ph ph-tree-structure"></i>
+                  </button>
                   <button class="btn-action-delete" title="Excluir Usuário" @click="deleteUser(u.id)">
                     <i class="ph ph-trash"></i>
                   </button>
@@ -483,9 +564,12 @@ const filteredUsers = computed(() => {
           </div>
         </div>
 
-        <div class="mobile-card-actions">
+        <div class="mobile-card-actions" style="grid-template-columns: 1fr 1fr 1fr;">
           <button class="btn btn-outline btn-full btn-sm" @click="openEditAccess(u)">
-            <i class="ph ph-pencil-simple"></i> Editar Usuário
+            <i class="ph ph-pencil-simple"></i> Editar
+          </button>
+          <button class="btn btn-outline btn-full btn-sm" @click="openTreeModal(u)" style="color: #7c3aed; border-color: #7c3aed;">
+            <i class="ph ph-tree-structure"></i> Rede
           </button>
           <button class="btn btn-outline btn-full btn-sm text-red" @click="deleteUser(u.id)">
             <i class="ph ph-trash"></i> Excluir
@@ -760,6 +844,163 @@ const filteredUsers = computed(() => {
         <div style="margin-top: 24px; text-align: right;">
           <button class="btn btn-outline" @click="showConfigModal = false" style="margin-right: 12px;">Cancelar</button>
           <button class="btn btn-secondary" @click="saveRules">Salvar Tudo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: VISUALIZAR REDE MMN (PIRÂMIDE / ÁRVORE) -->
+    <div v-if="showTreeModal" class="custom-modal-overlay" @click.self="showTreeModal = false">
+      <div class="custom-modal-card modal-large" style="max-width: 700px;">
+        <div class="modal-header-container">
+          <h3><i class="ph ph-tree-structure"></i> Rede de Afiliados (Árvore MMN)</h3>
+          <button class="btn-close-modal" @click="showTreeModal = false">✕</button>
+        </div>
+        
+        <div v-if="selectedTreeUser">
+          <div style="background: #faf5ff; border-left: 4px solid #7c3aed; padding: 16px; border-radius: var(--radius-sm); margin-bottom: 24px;">
+            <strong style="font-size: 16px; color: #4c1d95;">Usuário Raiz: {{ selectedTreeUser.name }}</strong>
+            <div style="font-size: 13px; color: #6b21a8; margin-top: 4px; display:flex; justify-content:space-between;">
+              <span>Plano: {{ selectedTreeUser.plan }} • Nível: {{ selectedTreeUser.level }}</span>
+              <strong>Total Comissão Recebida: R$ {{ calculateUserCommission(selectedTreeUser).toFixed(2) }}</strong>
+            </div>
+          </div>
+          
+          <h4 style="margin-bottom: 12px; color: var(--secondary);">Estrutura Hierárquica (Até 5 Níveis)</h4>
+          
+          <div class="referral-tree-container" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; max-height: 400px; overflow-y: auto;">
+            <!-- Componente de Recursividade inline da Árvore MMN -->
+            <div v-if="getReferralTree(selectedTreeUser.name).length > 0">
+              <div v-for="node1 in getReferralTree(selectedTreeUser.name)" :key="node1.name" class="tree-node depth-1">
+                <div class="tree-item-box">
+                  <span class="tree-badge l1">1º Nível</span>
+                  <strong>{{ node1.name }}</strong>
+                  <span class="tree-plan-name">({{ node1.plan }})</span>
+                  <span :class="['status-pill', node1.status]" style="font-size: 10px; padding: 1px 6px;">{{ node1.status }}</span>
+                  <span class="tree-gain-share">+ R$ {{ ((node1.plan === 'Família' ? config.planFamilyMmn : config.planIndividualMmn) * config.percentages[0] / 100).toFixed(2) }}</span>
+                </div>
+                
+                <!-- Nível 2 -->
+                <div v-if="node1.children.length > 0" style="margin-left: 24px; border-left: 2px dashed #e2e8f0; padding-left: 16px; margin-top: 8px;">
+                  <div v-for="node2 in node1.children" :key="node2.name" class="tree-node depth-2">
+                    <div class="tree-item-box">
+                      <span class="tree-badge l2">2º Nível</span>
+                      <strong>{{ node2.name }}</strong>
+                      <span class="tree-plan-name">({{ node2.plan }})</span>
+                      <span :class="['status-pill', node2.status]" style="font-size: 10px; padding: 1px 6px;">{{ node2.status }}</span>
+                      <span class="tree-gain-share">+ R$ {{ ((node2.plan === 'Família' ? config.planFamilyMmn : config.planIndividualMmn) * config.percentages[1] / 100).toFixed(2) }}</span>
+                    </div>
+                    
+                    <!-- Nível 3 -->
+                    <div v-if="node2.children.length > 0" style="margin-left: 24px; border-left: 2px dashed #e2e8f0; padding-left: 16px; margin-top: 8px;">
+                      <div v-for="node3 in node2.children" :key="node3.name" class="tree-node depth-3">
+                        <div class="tree-item-box">
+                          <span class="tree-badge l3">3º Nível</span>
+                          <strong>{{ node3.name }}</strong>
+                          <span class="tree-plan-name">({{ node3.plan }})</span>
+                          <span :class="['status-pill', node3.status]" style="font-size: 10px; padding: 1px 6px;">{{ node3.status }}</span>
+                          <span class="tree-gain-share">+ R$ {{ ((node3.plan === 'Família' ? config.planFamilyMmn : config.planIndividualMmn) * config.percentages[2] / 100).toFixed(2) }}</span>
+                        </div>
+                        
+                        <!-- Nível 4 -->
+                        <div v-if="node3.children.length > 0" style="margin-left: 24px; border-left: 2px dashed #e2e8f0; padding-left: 16px; margin-top: 8px;">
+                          <div v-for="node4 in node3.children" :key="node4.name" class="tree-node depth-4">
+                            <div class="tree-item-box">
+                              <span class="tree-badge l4">4º Nível</span>
+                              <strong>{{ node4.name }}</strong>
+                              <span class="tree-plan-name">({{ node4.plan }})</span>
+                              <span :class="['status-pill', node4.status]" style="font-size: 10px; padding: 1px 6px;">{{ node4.status }}</span>
+                              <span class="tree-gain-share">+ R$ {{ ((node4.plan === 'Família' ? config.planFamilyMmn : config.planIndividualMmn) * config.percentages[3] / 100).toFixed(2) }}</span>
+                            </div>
+                            
+                            <!-- Nível 5 -->
+                            <div v-if="node4.children.length > 0" style="margin-left: 24px; border-left: 2px dashed #e2e8f0; padding-left: 16px; margin-top: 8px;">
+                              <div v-for="node5 in node4.children" :key="node5.name" class="tree-node depth-5">
+                                <div class="tree-item-box">
+                                  <span class="tree-badge l5">5º Nível</span>
+                                  <strong>{{ node5.name }}</strong>
+                                  <span class="tree-plan-name">({{ node5.plan }})</span>
+                                  <span :class="['status-pill', node5.status]" style="font-size: 10px; padding: 1px 6px;">{{ node5.status }}</span>
+                                  <span class="tree-gain-share">+ R$ {{ ((node5.plan === 'Família' ? config.planFamilyMmn : config.planIndividualMmn) * config.percentages[4] / 100).toFixed(2) }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else style="text-align: center; color: var(--text-gray); padding: 24px;">
+              Este usuário ainda não possui indicações registradas na sua rede de afiliados.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 4: FINANCEIRO ADMIN (HISTÓRICO E DETALHAMENTO DE COMISSÕES) -->
+    <div v-if="showFinanceModal" class="custom-modal-overlay" @click.self="showFinanceModal = false">
+      <div class="custom-modal-card modal-large" style="max-width: 800px;">
+        <div class="modal-header-container">
+          <h3><i class="ph ph-chart-line-up"></i> Histórico de Faturamento e Renovações</h3>
+          <button class="btn-close-modal" @click="showFinanceModal = false">✕</button>
+        </div>
+        
+        <!-- Grid de métricas rápidas de faturamento -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+          <div class="rules-col-box" style="text-align: center; padding: 14px;">
+            <span style="font-size: 11px; color: var(--text-gray); font-weight: 600; display:block;">FATURAMENTO BRUTO</span>
+            <strong style="font-size: 22px; color: var(--secondary);">R$ {{ billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.value, 0).toFixed(2) }}</strong>
+          </div>
+          <div class="rules-col-box" style="text-align: center; padding: 14px; border-color: #fbcfe8;">
+            <span style="font-size: 11px; color: var(--text-gray); font-weight: 600; display:block;">COMISSÕES DISTRIBUÍDAS</span>
+            <strong style="font-size: 22px; color: #db2777;">R$ {{ billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.commissionMmn, 0).toFixed(2) }}</strong>
+          </div>
+          <div class="rules-col-box" style="text-align: center; padding: 14px; border-color: #bbf7d0;">
+            <span style="font-size: 11px; color: var(--text-gray); font-weight: 600; display:block;">LUCRO LÍQUIDO MENSAL</span>
+            <strong style="font-size: 22px; color: #16a34a;">R$ {{ (billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.value, 0) - billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.commissionMmn, 0)).toFixed(2) }}</strong>
+          </div>
+        </div>
+
+        <h4 style="margin-bottom: 12px; color: var(--secondary);">Histórico de Transações e Renovações</h4>
+        <div class="card" style="padding: 0; overflow-x: auto; max-height: 350px;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Usuário</th>
+                <th>Plano</th>
+                <th>Valor Pago</th>
+                <th>Vencimento/Pagamento</th>
+                <th>Status</th>
+                <th>MMN Pago</th>
+                <th>Detalhamento da Comissão</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="b in billingHistory" :key="b.id">
+                <td><strong>{{ b.user }}</strong></td>
+                <td>{{ b.plan }}</td>
+                <td>R$ {{ b.value.toFixed(2) }}</td>
+                <td>{{ b.date }}</td>
+                <td>
+                  <span :class="['status-pill', b.status === 'Pago' ? 'ativo' : (b.status === 'Pendente' ? 'pendente' : 'inativo')]">
+                    {{ b.status }}
+                  </span>
+                </td>
+                <td style="font-weight: bold; color: #db2777;">R$ {{ b.commissionMmn.toFixed(2) }}</td>
+                <td>
+                  <div v-if="b.commissionMmn > 0 && getCommissionReceivers(b.user, b.plan).length > 0" style="display:flex; flex-direction:column; gap:4px; font-size: 11px;">
+                    <div v-for="recv in getCommissionReceivers(b.user, b.plan)" :key="recv.name" style="background:#fdf2f8; border:1px solid #fbcfe8; padding: 2px 6px; border-radius: 4px;">
+                      Nív {{ recv.level }} ➔ <strong>{{ recv.name }}</strong> (R$ {{ recv.gain.toFixed(2) }})
+                    </div>
+                  </div>
+                  <span v-else class="text-gray" style="font-size:11px;">Nenhuma comissão distribuída</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1201,6 +1442,53 @@ const filteredUsers = computed(() => {
 
 .mini-table td {
   padding: 8px 12px;
+}
+
+/* Árvore Hierárquica MMN style */
+.referral-tree-container {
+  font-family: inherit;
+}
+
+.tree-node {
+  margin-bottom: 12px;
+  transition: var(--transition);
+}
+
+.tree-item-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-dark);
+}
+
+.tree-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: white;
+}
+
+.tree-badge.l1 { background: #3b82f6; }
+.tree-badge.l2 { background: #8b5cf6; }
+.tree-badge.l3 { background: #ec4899; }
+.tree-badge.l4 { background: #f59e0b; }
+.tree-badge.l5 { background: #10b981; }
+
+.tree-plan-name {
+  font-size: 11px;
+  color: var(--text-gray);
+}
+
+.tree-gain-share {
+  font-weight: 700;
+  color: #16a34a;
+  margin-left: 8px;
 }
 
 /* Formulário e Checklist */
