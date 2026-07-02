@@ -14,7 +14,8 @@ const activeTab = ref('all')
   <div class="financial-page">
     <div class="page-title">
       <h1>Área Financeira</h1>
-      <p>Gerencie sua assinatura, consulte faturas e histórico de pagamentos.</p>
+      <p>Gerencie sua assinatura.</p>
+      <p style="margin-top: 6px; opacity: 0.85;">Consulte faturas e histórico de pagamentos.</p>
     </div>
 
     <!-- Cards de Resumo -->

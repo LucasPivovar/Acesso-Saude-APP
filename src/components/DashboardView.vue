@@ -606,7 +606,8 @@ const saveEditedLink = () => {
     <div v-if="currentTab === 'financeiro'" class="tab-content animated-item" style="animation-delay: 0s;">
       <header class="tab-header">
         <h2>Financeiro & Faturamento</h2>
-        <p>Gerencie sua assinatura, consulte boletos/PIX ativos e histórico de cobranças.</p>
+        <p>Gerencie sua assinatura.</p>
+        <p style="margin-top: 6px; opacity: 0.85;">Consulte boletos/PIX ativos e histórico de cobranças.</p>
       </header>
 
       <div class="financial-grid">
