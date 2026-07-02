@@ -1152,48 +1152,109 @@ const saveEditedLink = () => {
           
           <div style="display: flex; flex-direction: column; gap: 16px;">
             <!-- 1º Nível -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-              <div>
-                <strong style="display: block; font-size: 14px; color: var(--text-dark);">1º Nível - Indicações Diretas</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">15 pessoas ativas • 15 × R$ 10,00</span>
+            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="display: block; font-size: 14px; color: var(--text-dark);">1º Nível - Indicações Diretas</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">15 pessoas ativas • 15 × R$ 10,00</span>
+                </div>
+                <strong style="color: #1d4ed8; font-size: 16px;">R$ 150,00</strong>
               </div>
-              <strong style="color: #1d4ed8; font-size: 16px;">R$ 150,00</strong>
+              <div style="background: #f8fafc; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Carlos Silva (Individual)</span>
+                  <strong>+ R$ 10,00</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Marina Costa (Individual)</span>
+                  <strong>+ R$ 10,00</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 João Pereira (Individual)</span>
+                  <strong>+ R$ 10,00</strong>
+                </div>
+                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 12 indicados diretos ativos</span>
+              </div>
             </div>
 
             <!-- 2º Nível -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-              <div>
-                <strong style="display: block; font-size: 14px; color: var(--text-dark);">2º Nível</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">20 pessoas ativas • 20 × R$ 5,00</span>
+            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="display: block; font-size: 14px; color: var(--text-dark);">2º Nível</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">20 pessoas ativas • 20 × R$ 5,00</span>
+                </div>
+                <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
               </div>
-              <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
+              <div style="background: #f8fafc; border-left: 3px solid #8b5cf6; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Ana Martins (Família)</span>
+                  <strong>+ R$ 5,00</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Lucas Souza (Família)</span>
+                  <strong>+ R$ 5,00</strong>
+                </div>
+                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 18 indicados indiretos ativos</span>
+              </div>
             </div>
 
             <!-- 3º Nível -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-              <div>
-                <strong style="display: block; font-size: 14px; color: var(--text-dark);">3º Nível</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">20 pessoas ativas • 20 × R$ 5,00</span>
+            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="display: block; font-size: 14px; color: var(--text-dark);">3º Nível</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">20 pessoas ativas • 20 × R$ 5,00</span>
+                </div>
+                <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
               </div>
-              <strong style="color: #1d4ed8; font-size: 16px;">R$ 100,00</strong>
+              <div style="background: #f8fafc; border-left: 3px solid #ec4899; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Pedro Santos (Individual)</span>
+                  <strong>+ R$ 5,00</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Júlia Ramos (Individual)</span>
+                  <strong>+ R$ 5,00</strong>
+                </div>
+                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 18 indicados indiretos ativos</span>
+              </div>
             </div>
 
             <!-- 4º Nível -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-              <div>
-                <strong style="display: block; font-size: 14px; color: var(--text-dark);">4º Nível</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">25 pessoas ativas • 25 × R$ 2,75</span>
+            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="display: block; font-size: 14px; color: var(--text-dark);">4º Nível</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">25 pessoas ativas • 25 × R$ 2,75</span>
+                </div>
+                <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
               </div>
-              <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
+              <div style="background: #f8fafc; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Bruno Alves (Bronze)</span>
+                  <strong>+ R$ 2,75</strong>
+                </div>
+                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 24 indicados indiretos ativos</span>
+              </div>
             </div>
 
             <!-- 5º Nível -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 4px;">
-              <div>
-                <strong style="display: block; font-size: 14px; color: var(--text-dark);">5º Nível</strong>
-                <span style="font-size: 12px; color: var(--text-gray);">25 pessoas ativas • 25 × R$ 2,75</span>
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="display: block; font-size: 14px; color: var(--text-dark);">5º Nível</strong>
+                  <span style="font-size: 12px; color: var(--text-gray);">25 pessoas ativas • 25 × R$ 2,75</span>
+                </div>
+                <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
               </div>
-              <strong style="color: #1d4ed8; font-size: 16px;">R$ 68,75</strong>
+              <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-dark);">
+                  <span>👤 Clara Mendes (Bronze)</span>
+                  <strong>+ R$ 2,75</strong>
+                </div>
+                <span style="font-size: 10px; color: var(--text-gray); text-align: center; font-style: italic;">... e mais 24 indicados indiretos ativos</span>
+              </div>
             </div>
           </div>
         </div>
