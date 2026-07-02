@@ -12,7 +12,7 @@ const activeTab = ref('all')
 
 <template>
   <div class="financial-page">
-    <div class="page-title">
+    <div class="page-title" style="margin-bottom: 24px;">
       <h1>Área Financeira</h1>
       <p>Gerencie sua assinatura.</p>
       <p style="margin-top: 6px; opacity: 0.85;">Consulte faturas e histórico de pagamentos.</p>

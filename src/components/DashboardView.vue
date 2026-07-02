@@ -604,7 +604,7 @@ const saveEditedLink = () => {
 
     <!-- ABA 3: FINANCEIRO (Layout Melhorado e Profissional) -->
     <div v-if="currentTab === 'financeiro'" class="tab-content animated-item" style="animation-delay: 0s;">
-      <header class="tab-header">
+      <header class="tab-header" style="margin-bottom: 24px;">
         <h2>Financeiro & Faturamento</h2>
         <p>Gerencie sua assinatura.</p>
         <p style="margin-top: 6px; opacity: 0.85;">Consulte boletos/PIX ativos e histórico de cobranças.</p>
