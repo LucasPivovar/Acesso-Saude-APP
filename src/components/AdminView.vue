@@ -1371,4 +1371,18 @@ const filteredUsers = computed(() => {
   border-top: 1px solid var(--border-color);
   padding-top: 12px;
 }
+
+/* Alinhamento dos modais e inputs */
+.custom-modal-card {
+  text-align: left !important;
+}
+
+.form-label {
+  text-align: left !important;
+  display: block;
+}
+
+.form-control {
+  text-align: left !important;
+}
 </style>
