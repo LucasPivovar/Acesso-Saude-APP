@@ -581,14 +581,14 @@ const filteredUsers = computed(() => {
             </div>
           </div>
 
-          <div class="mobile-card-actions" style="grid-template-columns: 1fr 1fr 1fr;">
-            <button class="btn btn-outline btn-full btn-sm" @click="openEditAccess(u)">
+          <div class="mobile-card-actions" style="display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--border-color); padding-top: 12px;">
+            <button class="btn btn-outline btn-sm" @click="openEditAccess(u)" style="flex: 1; min-width: 70px; display: flex; align-items: center; justify-content: center; gap: 4px;">
               <i class="ph ph-pencil-simple"></i> Editar
             </button>
-            <button class="btn btn-outline btn-full btn-sm" @click="openTreeModal(u)" style="color: #7c3aed; border-color: #7c3aed;">
+            <button class="btn btn-outline btn-sm" @click="openTreeModal(u)" style="flex: 1; min-width: 70px; color: #7c3aed; border-color: #7c3aed; display: flex; align-items: center; justify-content: center; gap: 4px;">
               <i class="ph ph-tree-structure"></i> Rede
             </button>
-            <button class="btn btn-outline btn-full btn-sm text-red" @click="deleteUser(u.id)">
+            <button class="btn btn-outline btn-sm text-red" @click="deleteUser(u.id)" style="flex: 1; min-width: 70px; display: flex; align-items: center; justify-content: center; gap: 4px;">
               <i class="ph ph-trash"></i> Excluir
             </button>
           </div>

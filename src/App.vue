@@ -15,8 +15,8 @@ const currentUser = ref({
 // Abas de navegação: 'home', 'perfil', 'financeiro', 'configuracoes'
 const currentTab = ref('home')
 
-// Modo de layout de visualização: 'desktop' ou 'pwa'
-const layoutMode = ref('desktop')
+// Modo de layout de visualização: 'desktop' ou 'pwa' (inicializado dinamicamente pelo tamanho da tela)
+const layoutMode = ref(window.innerWidth < 768 ? 'pwa' : 'desktop')
 
 // Dropdown de perfil no Desktop
 const showDropdown = ref(false)
@@ -86,27 +86,14 @@ const handleRouting = () => {
 onMounted(() => {
   handleRouting()
   window.addEventListener('popstate', handleRouting)
+  window.addEventListener('resize', () => {
+    layoutMode.value = window.innerWidth < 768 ? 'pwa' : 'desktop'
+  })
 })
 </script>
 
 <template>
-  <!-- Seletor PWA / Desktop flutuante -->
-  <div class="mode-selector">
-    <button 
-      :class="['mode-btn', { active: layoutMode === 'desktop' }]" 
-      @click="layoutMode = 'desktop'"
-    >
-      <i class="ph ph-monitor"></i>
-      <span>Desktop</span>
-    </button>
-    <button 
-      :class="['mode-btn', { active: layoutMode === 'pwa' }]" 
-      @click="layoutMode = 'pwa'"
-    >
-      <i class="ph ph-device-mobile"></i>
-      <span>PWA (Mobile)</span>
-    </button>
-  </div>
+
 
   <!-- Estado Deslogado: Tela de Login -->
   <LoginView v-if="!isLoggedIn" @login="handleLogin" />
