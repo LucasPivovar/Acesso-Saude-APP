@@ -10,6 +10,9 @@ const props = defineProps({
 
 const emit = defineEmits(['triggerDevModal'])
 
+// Aba ativa do Admin: 'usuarios' ou 'financeiro'
+const activeAdminTab = ref('usuarios')
+
 // Dados do LocalStorage ou mockados inicialmente
 const users = ref([])
 const config = ref({
@@ -30,16 +33,15 @@ const config = ref({
 const showRegisterModal = ref(false)
 const showConfigModal = ref(false)
 const showTreeModal = ref(false)
-const showFinanceModal = ref(false)
 const selectedTreeUser = ref(null)
 const editingUser = ref(null)
 
 // Histórico Financeiro do Admin (Renovações e Comissões)
 const billingHistory = ref([
-  { id: 1, user: 'João Silva', plan: 'Família', value: 129.90, status: 'Pago', date: '01/07/2026', commissionMmn: 50.00 },
-  { id: 2, user: 'Carlos Silva', plan: 'Individual', value: 79.90, status: 'Pago', date: '01/07/2026', commissionMmn: 20.00 },
+  { id: 1, user: 'João Silva', plan: 'Família', value: 129.90, status: 'Renovado (Pago)', date: '01/07/2026', commissionMmn: 50.00 },
+  { id: 2, user: 'Carlos Silva', plan: 'Individual', value: 79.90, status: 'Renovado (Pago)', date: '01/07/2026', commissionMmn: 20.00 },
   { id: 3, user: 'Marina Costa', plan: 'Individual', value: 79.90, status: 'Pendente', date: '01/07/2026', commissionMmn: 0.00 },
-  { id: 4, user: 'Ana Martins', plan: 'Família', value: 129.90, status: 'Pago', date: '20/06/2026', commissionMmn: 50.00 },
+  { id: 4, user: 'Ana Martins', plan: 'Família', value: 129.90, status: 'Renovado (Pago)', date: '20/06/2026', commissionMmn: 50.00 },
   { id: 5, user: 'Pedro Santos', plan: 'Individual', value: 79.90, status: 'Atrasado', date: '10/06/2026', commissionMmn: 0.00 }
 ])
 
@@ -218,7 +220,7 @@ const getReferralTree = (userName, currentLevel = 1) => {
   })
 }
 
-// Detalha os padrinho que receberam a comissão de uma determinada renovação
+// Detalha os padrinhos que receberam a comissão de uma determinada renovação
 const getCommissionReceivers = (userName, planName) => {
   const receivers = []
   let currentUser = users.value.find(u => u.name === userName)
@@ -298,7 +300,7 @@ const registerUser = () => {
     user: createdUser.name,
     plan: createdUser.plan,
     value: calculatePrice(createdUser.access, createdUser.plan),
-    status: 'Pago',
+    status: 'Renovado (Pago)',
     date: new Date().toLocaleDateString('pt-BR'),
     commissionMmn: createdUser.plan === 'Família' ? config.value.planFamilyMmn : (createdUser.plan === 'Individual' ? config.value.planIndividualMmn : 0.00)
   })
@@ -402,183 +404,259 @@ const filteredUsers = computed(() => {
           <button class="btn btn-outline" @click="showConfigModal = true">
             <i class="ph ph-sliders"></i> Regras & Comissões
           </button>
-          <button class="btn btn-outline" @click="showFinanceModal = true" style="margin-top: 4px;">
-            <i class="ph ph-chart-line-up"></i> Financeiro & Renovações
-          </button>
         </div>
       </div>
     </header>
 
-    <!-- Barra de Pesquisa -->
-    <div class="card search-card animated-item" style="animation-delay: 0.05s; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center;">
-      <i class="ph ph-magnifying-glass text-gray"></i>
-      <input 
-        v-model="searchFilter"
-        type="text" 
-        placeholder="Buscar usuário por nome, email ou CPF..." 
-        class="form-control"
-        style="border: none; padding: 4px; font-size: 14px; width: 100%; outline: none;"
-      />
+    <!-- Navegação de Abas do Admin -->
+    <div class="admin-tabs-nav">
+      <button 
+        :class="['admin-tab-btn', { active: activeAdminTab === 'usuarios' }]" 
+        @click="activeAdminTab = 'usuarios'"
+      >
+        <i class="ph ph-users"></i> Gestão de Usuários & Rede
+      </button>
+      <button 
+        :class="['admin-tab-btn', { active: activeAdminTab === 'financeiro' }]" 
+        @click="activeAdminTab = 'financeiro'"
+      >
+        <i class="ph ph-chart-line-up"></i> Histórico Financeiro (Renovações)
+      </button>
     </div>
 
-    <!-- LISTA DE USUÁRIOS: DESKTOP -->
-    <div v-if="layoutMode === 'desktop'" class="admin-content animated-item" style="animation-delay: 0.1s;">
+    <!-- ABA 1: GESTÃO DE USUÁRIOS -->
+    <div v-if="activeAdminTab === 'usuarios'" class="tab-content-admin">
+      <!-- Barra de Pesquisa -->
+      <div class="card search-card animated-item" style="animation-delay: 0.05s; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center;">
+        <i class="ph ph-magnifying-glass text-gray"></i>
+        <input 
+          v-model="searchFilter"
+          type="text" 
+          placeholder="Buscar usuário por nome, email ou CPF..." 
+          class="form-control"
+          style="border: none; padding: 4px; font-size: 14px; width: 100%; outline: none;"
+        />
+      </div>
+
+      <!-- LISTA DE USUÁRIOS: DESKTOP -->
+      <div v-if="layoutMode === 'desktop'" class="admin-content animated-item" style="animation-delay: 0.1s;">
+        <div class="card" style="padding: 0; overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Usuário</th>
+                <th>Plano</th>
+                <th>Nível Rede</th>
+                <th>Indicado Por</th>
+                <th>Acessos Ativos</th>
+                <th>Mensalidade</th>
+                <th>Comissão Recebida (MMN)</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="u in filteredUsers" :key="u.id">
+                <td>
+                  <div class="user-info-col">
+                    <strong>{{ u.name }}</strong>
+                    <span>{{ u.email }} • CPF: {{ u.cpf }}</span>
+                  </div>
+                </td>
+                <td>{{ u.plan }}</td>
+                <td>
+                  <span class="badge badge-level">{{ u.level }}</span>
+                </td>
+                <td>
+                  <span v-if="u.referredBy !== 'Nenhum'" class="referred-badge">
+                    <i class="ph ph-arrow-bend-down-right"></i> {{ u.referredBy }}
+                  </span>
+                  <span v-else class="text-gray">-</span>
+                </td>
+                <td>
+                  <div class="modules-badges">
+                    <span :class="['module-badge-icon', { active: u.access.health }]" :title="'Telemedicina: ' + (u.access.health ? 'Ativo' : 'Inativo')">
+                      <i class="ph ph-first-aid"></i>
+                    </span>
+                    <span :class="['module-badge-icon', { active: u.access.clube }]" :title="'Clube de Descontos: ' + (u.access.clube ? 'Ativo' : 'Inativo')">
+                      <i class="ph ph-tag"></i>
+                    </span>
+                    <span :class="['module-badge-icon', { active: u.access.pet }]" :title="'Veterinário (Pet): ' + (u.access.pet ? 'Ativo' : 'Inativo')">
+                      <i class="ph ph-dog"></i>
+                    </span>
+                    <span :class="['module-badge-icon', { active: u.access.funeral }]" :title="'Auxílio Funerário: ' + (u.access.funeral ? 'Ativo' : 'Inativo')">
+                      <i class="ph ph-skull"></i>
+                    </span>
+                  </div>
+                </td>
+                <td class="price-col">
+                  R$ {{ calculatePrice(u.access, u.plan).toFixed(2) }}
+                </td>
+                <td style="font-weight: bold; color: #16a34a;">
+                  R$ {{ calculateUserCommission(u).toFixed(2) }}
+                </td>
+                <td>
+                  <span :class="['status-pill', u.status]">{{ u.status }}</span>
+                </td>
+                <td>
+                  <div class="actions-buttons">
+                    <button class="btn-action-edit" title="Editar Usuário" @click="openEditAccess(u)">
+                      <i class="ph ph-pencil-simple"></i>
+                    </button>
+                    <button class="btn-action-tree" title="Visualizar Rede MMN" @click="openTreeModal(u)" style="color: #7c3aed; background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 6px; border-radius: var(--radius-sm);">
+                      <i class="ph ph-tree-structure"></i>
+                    </button>
+                    <button class="btn-action-delete" title="Excluir Usuário" @click="deleteUser(u.id)">
+                      <i class="ph ph-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="filteredUsers.length === 0">
+                <td colspan="9" style="text-align: center; padding: 24px; color: var(--text-gray);">
+                  Nenhum usuário correspondente encontrado.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LISTA DE USUÁRIOS: MOBILE / PWA -->
+      <div v-else class="admin-content-mobile animated-item" style="animation-delay: 0.1s;">
+        <div v-for="u in filteredUsers" :key="u.id" class="mobile-user-card card">
+          <div class="mobile-card-header">
+            <div class="user-avatar-mini">{{ u.name.split(' ').map(n=>n[0]).join('') }}</div>
+            <div class="mobile-card-title">
+              <strong>{{ u.name }}</strong>
+              <span>{{ u.email }}</span>
+            </div>
+            <span :class="['status-pill', u.status]">{{ u.status }}</span>
+          </div>
+
+          <div class="mobile-card-details">
+            <div class="detail-row">
+              <span class="label">CPF:</span>
+              <span>{{ u.cpf }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Plano:</span>
+              <strong>{{ u.plan }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Rede:</span>
+              <span class="badge badge-level">{{ u.level }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Indicador:</span>
+              <span v-if="u.referredBy !== 'Nenhum'" class="referred-badge">
+                {{ u.referredBy }}
+              </span>
+              <span v-else>-</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Preço:</span>
+              <strong class="price-col">R$ {{ calculatePrice(u.access, u.plan).toFixed(2) }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Comissão MMN:</span>
+              <strong style="color: #16a34a;">R$ {{ calculateUserCommission(u).toFixed(2) }}</strong>
+            </div>
+            <div class="detail-row" style="border: none; padding-top: 10px;">
+              <span class="label">Serviços:</span>
+              <div class="modules-badges">
+                <span :class="['module-badge-icon', { active: u.access.health }]" :title="'Telemedicina: ' + (u.access.health ? 'Ativo' : 'Inativo')">
+                  <i class="ph ph-first-aid"></i>
+                </span>
+                <span :class="['module-badge-icon', { active: u.access.clube }]" :title="'Clube de Descontos: ' + (u.access.clube ? 'Ativo' : 'Inativo')">
+                  <i class="ph ph-tag"></i>
+                </span>
+                <span :class="['module-badge-icon', { active: u.access.pet }]" :title="'Veterinário (Pet): ' + (u.access.pet ? 'Ativo' : 'Inativo')">
+                  <i class="ph ph-dog"></i>
+                </span>
+                <span :class="['module-badge-icon', { active: u.access.funeral }]" :title="'Auxílio Funerário: ' + (u.access.funeral ? 'Ativo' : 'Inativo')">
+                  <i class="ph ph-skull"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mobile-card-actions" style="grid-template-columns: 1fr 1fr 1fr;">
+            <button class="btn btn-outline btn-full btn-sm" @click="openEditAccess(u)">
+              <i class="ph ph-pencil-simple"></i> Editar
+            </button>
+            <button class="btn btn-outline btn-full btn-sm" @click="openTreeModal(u)" style="color: #7c3aed; border-color: #7c3aed;">
+              <i class="ph ph-tree-structure"></i> Rede
+            </button>
+            <button class="btn btn-outline btn-full btn-sm text-red" @click="deleteUser(u.id)">
+              <i class="ph ph-trash"></i> Excluir
+            </button>
+          </div>
+        </div>
+
+        <div v-if="filteredUsers.length === 0" class="card" style="text-align: center; padding: 24px; color: var(--text-gray);">
+          Nenhum usuário correspondente encontrado.
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 2: HISTÓRICO FINANCEIRO / RENOVAÇÕES -->
+    <div v-else class="tab-content-admin animated-item" style="animation-delay: 0s;">
+      <!-- Grid de métricas rápidas de faturamento -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="rules-col-box" style="text-align: center; padding: 16px;">
+          <span style="font-size: 11px; color: var(--text-gray); font-weight: 700; display:block; margin-bottom: 4px;">FATURAMENTO BRUTO</span>
+          <strong style="font-size: 24px; color: var(--secondary);">R$ {{ billingHistory.filter(b=>b.status.includes('Pago')).reduce((a,b)=>a+b.value, 0).toFixed(2) }}</strong>
+        </div>
+        <div class="rules-col-box" style="text-align: center; padding: 16px; border-color: #fbcfe8;">
+          <span style="font-size: 11px; color: var(--text-gray); font-weight: 700; display:block; margin-bottom: 4px;">COMISSÕES DISTRIBUÍDAS</span>
+          <strong style="font-size: 24px; color: #db2777;">R$ {{ billingHistory.filter(b=>b.status.includes('Pago')).reduce((a,b)=>a+b.commissionMmn, 0).toFixed(2) }}</strong>
+        </div>
+        <div class="rules-col-box" style="text-align: center; padding: 16px; border-color: #bbf7d0;">
+          <span style="font-size: 11px; color: var(--text-gray); font-weight: 700; display:block; margin-bottom: 4px;">RECEITA LÍQUIDA DA EMPRESA</span>
+          <strong style="font-size: 24px; color: #16a34a;">R$ {{ (billingHistory.filter(b=>b.status.includes('Pago')).reduce((a,b)=>a+b.value, 0) - billingHistory.filter(b=>b.status.includes('Pago')).reduce((a,b)=>a+b.commissionMmn, 0)).toFixed(2) }}</strong>
+        </div>
+      </div>
+
       <div class="card" style="padding: 0; overflow-x: auto;">
         <table class="admin-table">
           <thead>
             <tr>
               <th>Usuário</th>
               <th>Plano</th>
-              <th>Nível Rede</th>
-              <th>Indicado Por</th>
-              <th>Acessos Ativos</th>
-              <th>Mensalidade</th>
-              <th>Comissão Recebida (MMN)</th>
-              <th>Status</th>
-              <th>Ações</th>
+              <th>Valor Cobrado</th>
+              <th>Data Vencimento/Pago</th>
+              <th>Status Renovação</th>
+              <th>MMN Distribuído</th>
+              <th>Padrinhos Beneficiados (Detalhamento MMN)</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="u in filteredUsers" :key="u.id">
+            <tr v-for="b in billingHistory" :key="b.id">
               <td>
-                <div class="user-info-col">
-                  <strong>{{ u.name }}</strong>
-                  <span>{{ u.email }} • CPF: {{ u.cpf }}</span>
-                </div>
+                <strong>{{ b.user }}</strong>
               </td>
-              <td>{{ u.plan }}</td>
+              <td>{{ b.plan }}</td>
+              <td class="price-col">R$ {{ b.value.toFixed(2) }}</td>
+              <td>{{ b.date }}</td>
               <td>
-                <span class="badge badge-level">{{ u.level }}</span>
-              </td>
-              <td>
-                <span v-if="u.referredBy !== 'Nenhum'" class="referred-badge">
-                  <i class="ph ph-arrow-bend-down-right"></i> {{ u.referredBy }}
+                <span :class="['status-pill', b.status.includes('Pago') ? 'ativo' : (b.status === 'Pendente' ? 'pendente' : 'inativo')]">
+                  {{ b.status }}
                 </span>
-                <span v-else class="text-gray">-</span>
               </td>
+              <td style="font-weight: bold; color: #db2777;">R$ {{ b.commissionMmn.toFixed(2) }}</td>
               <td>
-                <div class="modules-badges">
-                  <span :class="['module-badge-icon', { active: u.access.health }]" :title="'Telemedicina: ' + (u.access.health ? 'Ativo' : 'Inativo')">
-                    <i class="ph ph-first-aid"></i>
-                  </span>
-                  <span :class="['module-badge-icon', { active: u.access.clube }]" :title="'Clube de Descontos: ' + (u.access.clube ? 'Ativo' : 'Inativo')">
-                    <i class="ph ph-tag"></i>
-                  </span>
-                  <span :class="['module-badge-icon', { active: u.access.pet }]" :title="'Veterinário (Pet): ' + (u.access.pet ? 'Ativo' : 'Inativo')">
-                    <i class="ph ph-dog"></i>
-                  </span>
-                  <span :class="['module-badge-icon', { active: u.access.funeral }]" :title="'Auxílio Funerário: ' + (u.access.funeral ? 'Ativo' : 'Inativo')">
-                    <i class="ph ph-skull"></i>
-                  </span>
+                <div v-if="b.commissionMmn > 0 && getCommissionReceivers(b.user, b.plan).length > 0" style="display:flex; flex-direction:column; gap:4px; font-size: 11px;">
+                  <div v-for="recv in getCommissionReceivers(b.user, b.plan)" :key="recv.name" style="background:#fdf2f8; border:1px solid #fbcfe8; padding: 4px 8px; border-radius: 4px; display:inline-flex; align-items:center; justify-content:space-between; gap:10px;">
+                    <span>Nível {{ recv.level }}: <strong>{{ recv.name }}</strong></span>
+                    <strong style="color: #db2777;">+ R$ {{ recv.gain.toFixed(2) }}</strong>
+                  </div>
                 </div>
-              </td>
-              <td class="price-col">
-                R$ {{ calculatePrice(u.access, u.plan).toFixed(2) }}
-              </td>
-              <td style="font-weight: bold; color: #16a34a;">
-                R$ {{ calculateUserCommission(u).toFixed(2) }}
-              </td>
-              <td>
-                <span :class="['status-pill', u.status]">{{ u.status }}</span>
-              </td>
-              <td>
-                <div class="actions-buttons">
-                  <button class="btn-action-edit" title="Editar Usuário" @click="openEditAccess(u)">
-                    <i class="ph ph-pencil-simple"></i>
-                  </button>
-                  <button class="btn-action-tree" title="Visualizar Rede MMN" @click="openTreeModal(u)" style="color: #7c3aed; background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 6px; border-radius: var(--radius-sm);">
-                    <i class="ph ph-tree-structure"></i>
-                  </button>
-                  <button class="btn-action-delete" title="Excluir Usuário" @click="deleteUser(u.id)">
-                    <i class="ph ph-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="filteredUsers.length === 0">
-              <td colspan="9" style="text-align: center; padding: 24px; color: var(--text-gray);">
-                Nenhum usuário correspondente encontrado.
+                <span v-else class="text-gray" style="font-size:11px;">Nenhuma comissão distribuída</span>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- LISTA DE USUÁRIOS: MOBILE / PWA -->
-    <div v-else class="admin-content-mobile animated-item" style="animation-delay: 0.1s;">
-      <div v-for="u in filteredUsers" :key="u.id" class="mobile-user-card card">
-        <div class="mobile-card-header">
-          <div class="user-avatar-mini">{{ u.name.split(' ').map(n=>n[0]).join('') }}</div>
-          <div class="mobile-card-title">
-            <strong>{{ u.name }}</strong>
-            <span>{{ u.email }}</span>
-          </div>
-          <span :class="['status-pill', u.status]">{{ u.status }}</span>
-        </div>
-
-        <div class="mobile-card-details">
-          <div class="detail-row">
-            <span class="label">CPF:</span>
-            <span>{{ u.cpf }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Plano:</span>
-            <strong>{{ u.plan }}</strong>
-          </div>
-          <div class="detail-row">
-            <span class="label">Rede:</span>
-            <span class="badge badge-level">{{ u.level }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Indicador:</span>
-            <span v-if="u.referredBy !== 'Nenhum'" class="referred-badge">
-              {{ u.referredBy }}
-            </span>
-            <span v-else>-</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Preço:</span>
-            <strong class="price-col">R$ {{ calculatePrice(u.access, u.plan).toFixed(2) }}</strong>
-          </div>
-          <div class="detail-row">
-            <span class="label">Comissão MMN:</span>
-            <strong style="color: #16a34a;">R$ {{ calculateUserCommission(u).toFixed(2) }}</strong>
-          </div>
-          <div class="detail-row" style="border: none; padding-top: 10px;">
-            <span class="label">Serviços:</span>
-            <div class="modules-badges">
-              <span :class="['module-badge-icon', { active: u.access.health }]" :title="'Telemedicina: ' + (u.access.health ? 'Ativo' : 'Inativo')">
-                <i class="ph ph-first-aid"></i>
-              </span>
-              <span :class="['module-badge-icon', { active: u.access.clube }]" :title="'Clube de Descontos: ' + (u.access.clube ? 'Ativo' : 'Inativo')">
-                <i class="ph ph-tag"></i>
-              </span>
-              <span :class="['module-badge-icon', { active: u.access.pet }]" :title="'Veterinário (Pet): ' + (u.access.pet ? 'Ativo' : 'Inativo')">
-                <i class="ph ph-dog"></i>
-              </span>
-              <span :class="['module-badge-icon', { active: u.access.funeral }]" :title="'Auxílio Funerário: ' + (u.access.funeral ? 'Ativo' : 'Inativo')">
-                <i class="ph ph-skull"></i>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="mobile-card-actions" style="grid-template-columns: 1fr 1fr 1fr;">
-          <button class="btn btn-outline btn-full btn-sm" @click="openEditAccess(u)">
-            <i class="ph ph-pencil-simple"></i> Editar
-          </button>
-          <button class="btn btn-outline btn-full btn-sm" @click="openTreeModal(u)" style="color: #7c3aed; border-color: #7c3aed;">
-            <i class="ph ph-tree-structure"></i> Rede
-          </button>
-          <button class="btn btn-outline btn-full btn-sm text-red" @click="deleteUser(u.id)">
-            <i class="ph ph-trash"></i> Excluir
-          </button>
-        </div>
-      </div>
-
-      <div v-if="filteredUsers.length === 0" class="card" style="text-align: center; padding: 24px; color: var(--text-gray);">
-        Nenhum usuário correspondente encontrado.
       </div>
     </div>
 
@@ -868,7 +946,6 @@ const filteredUsers = computed(() => {
           <h4 style="margin-bottom: 12px; color: var(--secondary);">Estrutura Hierárquica (Até 5 Níveis)</h4>
           
           <div class="referral-tree-container" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; max-height: 400px; overflow-y: auto;">
-            <!-- Componente de Recursividade inline da Árvore MMN -->
             <div v-if="getReferralTree(selectedTreeUser.name).length > 0">
               <div v-for="node1 in getReferralTree(selectedTreeUser.name)" :key="node1.name" class="tree-node depth-1">
                 <div class="tree-item-box">
@@ -936,71 +1013,6 @@ const filteredUsers = computed(() => {
               Este usuário ainda não possui indicações registradas na sua rede de afiliados.
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL 4: FINANCEIRO ADMIN (HISTÓRICO E DETALHAMENTO DE COMISSÕES) -->
-    <div v-if="showFinanceModal" class="custom-modal-overlay" @click.self="showFinanceModal = false">
-      <div class="custom-modal-card modal-large" style="max-width: 800px;">
-        <div class="modal-header-container">
-          <h3><i class="ph ph-chart-line-up"></i> Histórico de Faturamento e Renovações</h3>
-          <button class="btn-close-modal" @click="showFinanceModal = false">✕</button>
-        </div>
-        
-        <!-- Grid de métricas rápidas de faturamento -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-          <div class="rules-col-box" style="text-align: center; padding: 14px;">
-            <span style="font-size: 11px; color: var(--text-gray); font-weight: 600; display:block;">FATURAMENTO BRUTO</span>
-            <strong style="font-size: 22px; color: var(--secondary);">R$ {{ billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.value, 0).toFixed(2) }}</strong>
-          </div>
-          <div class="rules-col-box" style="text-align: center; padding: 14px; border-color: #fbcfe8;">
-            <span style="font-size: 11px; color: var(--text-gray); font-weight: 600; display:block;">COMISSÕES DISTRIBUÍDAS</span>
-            <strong style="font-size: 22px; color: #db2777;">R$ {{ billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.commissionMmn, 0).toFixed(2) }}</strong>
-          </div>
-          <div class="rules-col-box" style="text-align: center; padding: 14px; border-color: #bbf7d0;">
-            <span style="font-size: 11px; color: var(--text-gray); font-weight: 600; display:block;">LUCRO LÍQUIDO MENSAL</span>
-            <strong style="font-size: 22px; color: #16a34a;">R$ {{ (billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.value, 0) - billingHistory.filter(b=>b.status==='Pago').reduce((a,b)=>a+b.commissionMmn, 0)).toFixed(2) }}</strong>
-          </div>
-        </div>
-
-        <h4 style="margin-bottom: 12px; color: var(--secondary);">Histórico de Transações e Renovações</h4>
-        <div class="card" style="padding: 0; overflow-x: auto; max-height: 350px;">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Usuário</th>
-                <th>Plano</th>
-                <th>Valor Pago</th>
-                <th>Vencimento/Pagamento</th>
-                <th>Status</th>
-                <th>MMN Pago</th>
-                <th>Detalhamento da Comissão</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="b in billingHistory" :key="b.id">
-                <td><strong>{{ b.user }}</strong></td>
-                <td>{{ b.plan }}</td>
-                <td>R$ {{ b.value.toFixed(2) }}</td>
-                <td>{{ b.date }}</td>
-                <td>
-                  <span :class="['status-pill', b.status === 'Pago' ? 'ativo' : (b.status === 'Pendente' ? 'pendente' : 'inativo')]">
-                    {{ b.status }}
-                  </span>
-                </td>
-                <td style="font-weight: bold; color: #db2777;">R$ {{ b.commissionMmn.toFixed(2) }}</td>
-                <td>
-                  <div v-if="b.commissionMmn > 0 && getCommissionReceivers(b.user, b.plan).length > 0" style="display:flex; flex-direction:column; gap:4px; font-size: 11px;">
-                    <div v-for="recv in getCommissionReceivers(b.user, b.plan)" :key="recv.name" style="background:#fdf2f8; border:1px solid #fbcfe8; padding: 2px 6px; border-radius: 4px;">
-                      Nív {{ recv.level }} ➔ <strong>{{ recv.name }}</strong> (R$ {{ recv.gain.toFixed(2) }})
-                    </div>
-                  </div>
-                  <span v-else class="text-gray" style="font-size:11px;">Nenhuma comissão distribuída</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -1187,6 +1199,39 @@ const filteredUsers = computed(() => {
   width: 100%;
   text-align: center;
   justify-content: center;
+}
+
+/* Navegação de Abas do Admin */
+.admin-tabs-nav {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.admin-tab-btn {
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-gray);
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+}
+
+.admin-tab-btn.active {
+  color: var(--secondary);
+  border-bottom-color: var(--secondary);
+}
+
+.admin-tab-btn:hover {
+  color: var(--secondary);
 }
 
 /* Tabela de Usuários */
