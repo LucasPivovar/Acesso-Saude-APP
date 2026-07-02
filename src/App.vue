@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import LoginView from './components/LoginView.vue'
 import DashboardView from './components/DashboardView.vue'
+import AdminView from './components/AdminView.vue'
 
 // Estado de Login simulado
 const isLoggedIn = ref(false)
@@ -49,6 +50,17 @@ const openDevModal = (data) => {
   devModalData.value = data
   showDevModal.value = true
 }
+
+onMounted(() => {
+  const path = window.location.pathname
+  const hash = window.location.hash
+  if (path === '/admin' || hash === '#/admin') {
+    currentTab.value = 'admin'
+    if (!isLoggedIn.value) {
+      isLoggedIn.value = true
+    }
+  }
+})
 </script>
 
 <template>
@@ -129,7 +141,13 @@ const openDevModal = (data) => {
 
       <!-- Conteúdo Desktop -->
       <main class="desktop-main container">
+        <AdminView 
+          v-if="currentTab === 'admin'"
+          :layoutMode="'desktop'"
+          @triggerDevModal="openDevModal"
+        />
         <DashboardView 
+          v-else
           :user="currentUser" 
           :layoutMode="'desktop'"
           :currentTab="currentTab"
@@ -160,7 +178,13 @@ const openDevModal = (data) => {
 
         <!-- Corpo do PWA -->
         <main class="main-content">
+          <AdminView 
+            v-if="currentTab === 'admin'"
+            :layoutMode="'pwa'"
+            @triggerDevModal="openDevModal"
+          />
           <DashboardView 
+            v-else
             :user="currentUser" 
             :layoutMode="'pwa'"
             :currentTab="currentTab"
